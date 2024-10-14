@@ -46,9 +46,9 @@ public class Water : Cell
         }
 
         // Left
-        for (int i = 0; i < CellStats.WATER_MOVEMENT_SPEED; i++)
+        for (int i = 1; i <= CellStats.WATER_DISPERSAL_RATE; i++)
         {
-            potential_position = new Vector2(Position.X -1, Position.Y);
+            potential_position = new Vector2(Position.X -i, Position.Y);
             neighbor = game_world.GetCell(potential_position);
             if ( left_bias == true && potential_position.X >= 0 && (neighbor == null || neighbor is Water) )
             { 
@@ -68,9 +68,9 @@ public class Water : Cell
         }
 
         // Right
-        for (int i = 0; i < CellStats.WATER_MOVEMENT_SPEED; i++)
+        for (int i = 1; i <= CellStats.WATER_DISPERSAL_RATE; i++)
         {
-            potential_position = new Vector2(Position.X +1, Position.Y);
+            potential_position = new Vector2(Position.X +i, Position.Y);
             neighbor = game_world.GetCell(potential_position);
             if ( left_bias == false && potential_position.X < game_world.WorldCanvasSize.X && (neighbor == null  || neighbor is Water) ) 
             {   

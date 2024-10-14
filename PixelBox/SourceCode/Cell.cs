@@ -4,7 +4,7 @@ namespace PixelBox;
 
 /// <summary>
 /// This is a base class to desribe what the essentials of any cell are.
-/// Cells are not meant to be added to the world directly, as they have little properties on their own.
+/// The base Cell class is not meant to be added to the world directly, as it has little properties on its own.
 /// Child classes such as Water.cs will extend this class, and are meant to be in the game world.
 /// </summary>
 public class Cell

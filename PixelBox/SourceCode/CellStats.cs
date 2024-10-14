@@ -13,8 +13,8 @@ public static class CellStats
     public static Dictionary<int, Color> WaterColors {get; private set;}
     public static Dictionary<int, Color> SandColors {get; private set;}
     
-    public static int WATER_FLOW_FACTOR = 50; // How easily water flows. Lower values = more flow.
-    public static int WATER_MOVEMENT_SPEED = 8; // How fast the water cells will move left / right
+    public static int WATER_FLOW_FACTOR = 50; // How often water flows into other water. Lower values = more flow.
+    public static int WATER_DISPERSAL_RATE = 3; // How many additional neighboring cells to check for horizontal movement
 
     public static void InitCellStats()
     {
