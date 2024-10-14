@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Security.Permissions;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using WraithLib;
 namespace PixelBox;
 
 public class Water : Cell
@@ -13,7 +8,7 @@ public class Water : Cell
     public Water(Vector2 position, World world) : base(position)
     {
         CellColor = ChooseRandomColor();
-        world.AddCell(this);
+        world.TryAddCell(this);
         game_world = world;
     }
 
@@ -31,7 +26,7 @@ public class Water : Cell
         // Below
         Vector2 potential_position = new Vector2(Position.X, Position.Y +1);
         Cell neighbor = game_world.GetCell(potential_position);
-        if ( potential_position.Y < GameCore.WorldCanvasSize.Y && (neighbor == null  || neighbor is Water) )
+        if ( potential_position.Y < game_world.WorldCanvasSize.Y && (neighbor == null  || neighbor is Water) )
         {   
             if (neighbor is Water && should_flow)
             {
@@ -77,7 +72,7 @@ public class Water : Cell
         {
             potential_position = new Vector2(Position.X +1, Position.Y);
             neighbor = game_world.GetCell(potential_position);
-            if ( left_bias == false && potential_position.X < GameCore.WorldCanvasSize.X && (neighbor == null  || neighbor is Water) ) 
+            if ( left_bias == false && potential_position.X < game_world.WorldCanvasSize.X && (neighbor == null  || neighbor is Water) ) 
             {   
                 if ( neighbor is Water && should_flow)
                 {
@@ -93,7 +88,6 @@ public class Water : Cell
                 }
             }
         }
-
     }
 
 }

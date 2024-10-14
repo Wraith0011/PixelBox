@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,20 +11,28 @@ public static class CellStats
 {    
     public static Texture2D CellTexture {get; private set;}
     public static Dictionary<int, Color> WaterColors {get; private set;}
+    public static Dictionary<int, Color> SandColors {get; private set;}
     
     public static int WATER_FLOW_FACTOR = 50; // How easily water flows. Lower values = more flow.
-    public static int WATER_SIMULATION_SPEED = 1; // How many times water cells will update each frame
     public static int WATER_MOVEMENT_SPEED = 8; // How fast the water cells will move left / right
 
     public static void InitCellStats()
     {
         CellTexture = CreateCellTexture();
+
         WaterColors = new Dictionary<int, Color>()
         {
             { 0, new Color(0, 0, 255) },
             { 1, new Color(0, 25, 255) },
             { 2, new Color(0, 50, 255) },
             { 3, new Color(0, 75, 255) }
+        };
+        SandColors = new Dictionary<int, Color>()
+        {
+            { 0, new Color(200, 150, 75) },
+            { 1, new Color(220, 170, 80) },
+            { 2, new Color(190, 180, 60) },
+            { 3, new Color(230, 210, 90) }
         };
     }
 

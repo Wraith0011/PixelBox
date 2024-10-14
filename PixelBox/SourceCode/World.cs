@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using WraithLib;
 
 namespace PixelBox;
 
@@ -7,13 +8,18 @@ public class World
 {
     public Dictionary<Vector2, Cell> WorldCells {get; set;}
 
-    public World()
+    public Canvas WorldCanvas {get; set;}
+    public Vector2 WorldCanvasSize {get; private set;} // World boundary for cells is based on this. This is the native size of the game, not the scaled canvas size.
+
+    public World(Vector2 world_canvas_size)
     {
         WorldCells = new Dictionary<Vector2, Cell>();
+        WorldCanvas = new Canvas((int)world_canvas_size.X, (int)world_canvas_size.Y);
+        WorldCanvasSize = world_canvas_size;
     }
 
     /// <summary>
-    /// Calls the update method on each cell in the game world. Some cells may be updated more than once per frame.
+    /// Calls the update method on each cell in the game world.
     /// </summary>
     public void Update()
     {   
@@ -26,14 +32,10 @@ public class World
                 water_cells.Add(water_cell);
             }
         }
-
         // Update the cells
         foreach (Water water_cell in water_cells)
         {
-            for (int i = 0; i < CellStats.WATER_SIMULATION_SPEED; i++)
-            {
-                water_cell.Update();
-            }
+            water_cell.Update();
         }
     }
 
@@ -51,11 +53,30 @@ public class World
     /// <summary>
     /// Attempts to add a cell to the world dictionary, will not replace existing cells.
     /// </summary>
-    public void AddCell(Cell cell)
+    public void TryAddCell(Cell cell)
     {
         WorldCells.TryAdd(cell.Position, cell);
     }
 
+    /// <summary>
+    /// Adds the given cell to the world dictionary, and replaces any cell that was there beforehand.
+    /// </summary>
+    public void AddCell(Cell cell)
+    {
+        WorldCells[cell.Position] = cell;
+    }
+
+    /// <summary>
+    /// Removes the given cell from the world dictionary.
+    /// </summary>
+    public void RemoveCell(Cell cell)
+    {
+        if (cell != null)
+        {
+            WorldCells.Remove(cell.Position);
+        }
+    }
+    
     /// <summary>
     /// Swaps a cell and its position with a neighboring cell. 
     /// </summary>
