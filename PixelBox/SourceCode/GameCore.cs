@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Net.Http.Headers;
+using System.ComponentModel.Design;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -18,12 +18,14 @@ public class GameCore : Game
 
     // Variables
     private GraphicsDeviceManager graphics;
+    private int ScrollValue {get; set;} = 1;
     public const int FRAMES_PER_SECOND = 60;
     private SpriteFont Font {get; set;}
     private int CellCount {get; set;} = 0;
     private Vector2 UI_Position_0 = new Vector2(0, 0);
     private Vector2 UI_Position_1 = new Vector2(0, 50);
     private Vector2 UI_Position_2 = new Vector2(0, 100);
+    private Vector2 UI_Position_3 = new Vector2(0, 150);
 
     public GameCore()
     {   
@@ -65,7 +67,6 @@ public class GameCore : Game
         ManageMouse();
         SelectCellType();
         CellCount = GameWorld.WorldCells.Count;
-
     }
 
     protected override void Draw(GameTime game_time)
@@ -85,26 +86,27 @@ public class GameCore : Game
         Globals.Sprite_Batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null);
         GameWorld.WorldCanvas.Draw(Globals.Sprite_Batch);
 
-        // Draw debug info
-        Globals.Sprite_Batch.DrawString(Font, "Cell Count: " + CellCount.ToString(), UI_Position_0, Color.White);
-        Globals.Sprite_Batch.DrawString(Font, "FPS: " + Globals.FPS, UI_Position_1, Color.White);
-        Globals.Sprite_Batch.DrawString(Font, "Selected: " + SelectedCellType.ToString(), UI_Position_2, Color.White);
-
+        DrawUI();
+        
         // End drawing to the screen
         Globals.Sprite_Batch.End();
-                
         Globals.UpdateGlobalTime(game_time);
     }
 
     private void ManageMouse()
     {
+        int scroll_delta = (Globals.CurrentMouseState.ScrollWheelValue - Globals.PreviousMouseState.ScrollWheelValue) / 120;
+        ScrollValue += scroll_delta * 2;
+        if (ScrollValue < 2) { ScrollValue = 2; }
+        else if (ScrollValue > 60) { ScrollValue = 60; }
+
         if (Globals.CurrentMouseState.LeftButton == ButtonState.Pressed && Globals.IsMouseInBounds)
         {
-            PlaceCellsInGrid(Globals.MousePositionOnCanvas, 3);
+            PlaceCellsInGrid(Globals.MousePositionOnCanvas, ScrollValue);
         }
         if (Globals.CurrentMouseState.RightButton == ButtonState.Pressed && Globals.IsMouseInBounds)
         {
-            EraceCellsInGrid(Globals.MousePositionOnCanvas, 3);
+            EraceCellsInGrid(Globals.MousePositionOnCanvas, ScrollValue);
         }
     }
 
@@ -147,10 +149,10 @@ public class GameCore : Game
     private void PlaceCellsInGrid(Vector2 position, int grid_size)
     {
         // rows
-        for (int y = (int)position.Y - grid_size; y < position.Y + grid_size; y++)
+        for (int y = (int)position.Y - grid_size/2; y < position.Y + grid_size/2; y++)
         {
             // columns
-            for (int x = (int)position.X - grid_size; x < position.X + grid_size; x++)
+            for (int x = (int)position.X - grid_size/2; x < position.X + grid_size/2; x++)
             {
                 Vector2 grid_coords = new Vector2(x, y);
 
@@ -185,10 +187,10 @@ public class GameCore : Game
     private void EraceCellsInGrid(Vector2 position, int grid_size)
     {
         // rows
-        for (int y = (int)position.Y - grid_size; y < position.Y + grid_size; y++)
+        for (int y = (int)position.Y - grid_size/2; y < position.Y + grid_size/2; y++)
         {
             // columns
-            for (int x = (int)position.X - grid_size; x < position.X + grid_size; x++)
+            for (int x = (int)position.X - grid_size/2; x < position.X + grid_size/2; x++)
             {
                 Vector2 grid_coords = new Vector2(x, y);
                 Cell cell = GameWorld.GetCell(grid_coords);
@@ -198,6 +200,14 @@ public class GameCore : Game
                 }
             }
         }
+    }
+
+    private void DrawUI()
+    {
+        Globals.Sprite_Batch.DrawString(Font, "Cell Count: " + CellCount.ToString(), UI_Position_0, Color.White);
+        Globals.Sprite_Batch.DrawString(Font, "FPS: " + Globals.FPS, UI_Position_1, Color.White);
+        Globals.Sprite_Batch.DrawString(Font, "Selected: " + SelectedCellType.ToString(), UI_Position_2, Color.White);
+        Globals.Sprite_Batch.DrawString(Font, "Brush Size: " + ScrollValue/2, UI_Position_3, Color.Aquamarine);
     }
 
 }

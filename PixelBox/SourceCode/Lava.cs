@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 namespace PixelBox;
 
@@ -23,11 +24,43 @@ public class Lava : Cell
         bool left_bias = GameCore.Random.Next(0, 2) == 0;
         bool should_flow = GameCore.Random.Next(0, CellStats.LAVA_FLOW_FACTOR) == 0;
         bool should_disperse = GameCore.Random.Next(0, CellStats.LAVA_DISPERSAL_CHANCE) == 0;
+        bool should_smoke_create = GameCore.Random.Next(0, CellStats.SMOKE_CREATION_CHANCE) == 0;
         
         Cell neighbor_below = game_world.GetCell( new Vector2(Position.X, Position.Y + 1) );
-        Cell neighbor_left  = game_world.GetCell( new Vector2(Position.X - 1, Position.Y) );
-        Cell neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
+        Cell neighbor_above = game_world.GetCell( new Vector2(Position.X, Position.Y - 1) );
         Vector2 potential_position;
+
+        // Create smoke
+        if ( should_smoke_create == true && (neighbor_above == null || neighbor_above is Steam) )
+        {
+            if (neighbor_above == null)
+            {
+                game_world.TryAddCell( new Smoke(new Vector2(Position.X, Position.Y - 1), game_world) );
+            }
+            else
+            {
+                Vector2 position = neighbor_above.Position;
+                game_world.AddCell( new Smoke(position, game_world) );
+            }
+        }
+
+        // Evaporate water, Melt sand
+        for (int y = (int)Position.Y - 1; y <= Position.Y + 1; y++)
+        {
+            for (int x = (int)Position.X - 1; x <= Position.X + 1; x++)
+            {
+                Vector2 position = new Vector2(x, y);
+                Cell cell = game_world.GetCell(position);
+                if (cell is Water)
+                {
+                    game_world.AddCell( new Steam(position, game_world) );
+                }
+                if (cell is Sand)
+                {
+                    game_world.AddCell( new Lava(position, game_world) );
+                }
+            }
+        }
         
         // Below Movement
         potential_position = new Vector2(Position.X, Position.Y +1);

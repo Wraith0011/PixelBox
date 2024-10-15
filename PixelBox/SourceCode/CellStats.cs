@@ -32,7 +32,7 @@ public static class CellStats
     public static int LAVA_DISPERSAL_RATE = 1; // How many additional neighboring cells to check for horizontal movement.
     public static int SMOKE_LIFETIME = 1000; // Lifetime of the smoke before it disappears. Higher values = longer lifetime.
     public static int SMOKE_DELETION_FACTOR = 100; // Chance for smoke to be deleted once its lifetime is over. Higher values = less chance.
-
+    public static int SMOKE_CREATION_CHANCE = 100;
     public static void InitCellStats()
     {
         CellTexture = CreateCellTexture();
