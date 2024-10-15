@@ -28,6 +28,7 @@ public class World
         List<Sand> sand_cells = new List<Sand>();
         List<Stone> stone_cells = new List<Stone>();
         List<Steam> steam_cells = new List<Steam>();
+        List<Lava> lava_cells = new List<Lava>();
         
         // Get cells in the world, and add them to the list of that cell type
         foreach (Cell cell in WorldCells.Values)
@@ -45,6 +46,9 @@ public class World
                     break;
                 case Steam steam_cell:
                     steam_cells.Add(steam_cell);
+                    break;
+                case Lava lava_cell:
+                    lava_cells.Add(lava_cell);
                     break;
             }
         }
@@ -65,6 +69,10 @@ public class World
         foreach (Steam steam_cell in steam_cells)
         {
             steam_cell.Update();
+        }
+        foreach (Lava lava_cell in lava_cells)
+        {
+            lava_cell.Update();
         }
     }
 

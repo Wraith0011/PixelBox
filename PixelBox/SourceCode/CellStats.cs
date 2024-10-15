@@ -14,17 +14,24 @@ public static class CellStats
     public static Dictionary<int, Color> SandColors {get; private set;}
     public static Dictionary<int, Color> StoneColors {get; private set;}
     public static Dictionary<int, Color> SteamColors {get; private set;}
+    public static Dictionary<int, Color> LavaColors {get; private set;}
+    public static Dictionary <int, Color> SmokeColors {get; private set;}
     
     public static int WATER_FLOW_FACTOR = 150; // How often water flows into other water. Lower values = more flow.
     public static int WATER_DISPERSAL_RATE = 3; // How many additional neighboring cells to check for horizontal movement.
     public static int WATER_CONVERSION_CHANCE = 50000; // The chance that water will turn into steam. Higher values = less chance.
     public static int STONE_EROSION_CHANCE = 1000; // How often water will erode stone. Higher values = less chance.
     public static int SAND_DISPLACEMENT_CHANCE = 25; // How often sand will be displaced by water. Higher values = less chance.
-    public static int SAND_COMPRESSION_FACTOR = 20; // How many sand cells have to be on top of each other in order to compress into stone.
+    public static int SAND_COMPRESSION_FACTOR = 50; // How many sand cells have to be on top of each other in order to compress into stone.
     public static int STEAM_DISPERSAL_RATE = 2; // How many additional neighboring cells to check for horizontal movement.
     public static int STEAM_DISPERSAL_CHANCE = 5; // The chance that steam will seek to flow horizontally to empty spaces. Higher values = less chance.
     public static int STEAM_FLOW_FACTOR = 25; // How often steam flows into other steam. Lower values = more flow.
     public static int STEAM_CONVERSION_CHANCE = 25000; // The chance that steam will turn into water. Higher values = less chance.
+    public static int LAVA_FLOW_FACTOR = 800; // How often lava flows into other lava. Lower values = more flow.
+    public static int LAVA_DISPERSAL_CHANCE = 10; // Chance for lava to move horizontally. Higher values = less chance.
+    public static int LAVA_DISPERSAL_RATE = 1; // How many additional neighboring cells to check for horizontal movement.
+    public static int SMOKE_LIFETIME = 1000; // Lifetime of the smoke before it disappears. Higher values = longer lifetime.
+    public static int SMOKE_DELETION_FACTOR = 100; // Chance for smoke to be deleted once its lifetime is over. Higher values = less chance.
 
     public static void InitCellStats()
     {
@@ -57,6 +64,20 @@ public static class CellStats
             { 1, new Color(200, 205, 210) },
             { 2, new Color(200, 205, 205) },
             { 3, new Color(200, 200, 210) }
+        };
+        LavaColors = new Dictionary<int, Color>()
+        {
+            { 0, new Color(170, 20, 25) },
+            { 1, new Color(200, 80, 35) },
+            { 2, new Color(190, 90, 25) },
+            { 3, new Color(220, 150, 35) }
+        };
+        SmokeColors = new Dictionary<int, Color>()
+        {
+            { 0, new Color(50, 50, 50) },
+            { 1, new Color(60, 50, 60) },
+            { 2, new Color(50, 50, 60) },
+            { 3, new Color(60, 50, 50) }
         };
     }
 

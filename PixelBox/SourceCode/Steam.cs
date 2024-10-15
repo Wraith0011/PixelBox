@@ -6,6 +6,8 @@ namespace PixelBox;
 public class Steam : Cell
 {
     World game_world;
+    public bool ShouldConvert {get; set;} = false;
+
     public Steam(Vector2 position, World world) : base(position)
     {
         CellColor = ChooseRandomColor();
@@ -19,7 +21,7 @@ public class Steam : Cell
         return CellStats.SteamColors[random_index];
     }
 
-    public void Update()
+    public virtual void Update()
     {
         bool left_bias = GameCore.Random.Next(0, 2) == 0;
         bool should_flow = GameCore.Random.Next(0, CellStats.STEAM_FLOW_FACTOR) == 0;
@@ -27,7 +29,7 @@ public class Steam : Cell
         bool should_disperse = GameCore.Random.Next(0, CellStats.STEAM_DISPERSAL_CHANCE) == 0;
 
         // Steam to water conversion
-        if (should_convert == true)
+        if (should_convert == true && this is not Smoke)
         {
             Vector2 position = Position;
             game_world.AddCell( new Water(position, game_world) );
@@ -58,7 +60,7 @@ public class Steam : Cell
             potential_position = new Vector2(Position.X -1, Position.Y);
             Cell neighbor_left = game_world.GetCell(potential_position);
 
-            if (neighbor_left != null && neighbor_left is not Steam)
+            if (neighbor_left != null && neighbor_left is not Steam && neighbor_left is not Water)
             {
                 break;
             }
@@ -86,7 +88,7 @@ public class Steam : Cell
             potential_position = new Vector2(Position.X +1, Position.Y);
             Cell neighbor_right = game_world.GetCell(potential_position);
 
-            if (neighbor_right != null && neighbor_right is not Steam)
+            if (neighbor_right != null && neighbor_right is not Steam && neighbor_right is not Water)
             {
                 break;
             }

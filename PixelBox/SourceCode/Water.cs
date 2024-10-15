@@ -12,6 +12,7 @@ public class Water : Cell
         game_world = world;
     }
 
+    // Choose random color upon creation
     private Color ChooseRandomColor()
     {
         int random_index = GameCore.Random.Next(0, CellStats.WaterColors.Count);
@@ -20,11 +21,16 @@ public class Water : Cell
 
     public void Update()
     { 
-        bool left_bias = GameCore.Random.Next(0, 2) == 0; // random number will be 0 or 1, representing left or right directional bias
-        bool should_flow = GameCore.Random.Next(0, CellStats.WATER_FLOW_FACTOR) == 0; // should the water attempt to flow this frame
+        bool left_bias = GameCore.Random.Next(0, 2) == 0;
+        bool should_flow = GameCore.Random.Next(0, CellStats.WATER_FLOW_FACTOR) == 0;
         bool should_erode = GameCore.Random.Next(0, CellStats.STONE_EROSION_CHANCE) == 0;
         bool should_displace = GameCore.Random.Next(0, CellStats.SAND_DISPLACEMENT_CHANCE) == 0;
         bool should_convert = GameCore.Random.Next(0, CellStats.WATER_CONVERSION_CHANCE) == 0;
+
+        Cell neighbor_below = game_world.GetCell( new Vector2(Position.X, Position.Y + 1) );
+        Cell neighbor_left  = game_world.GetCell( new Vector2(Position.X - 1, Position.Y) );
+        Cell neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
+        Vector2 potential_position;
 
         // Water to steam conversion
         if (should_convert == true)
@@ -32,19 +38,17 @@ public class Water : Cell
             Vector2 position = Position;
             game_world.AddCell( new Steam(position, game_world) );
         }
-
+        
         // Below Movement
-        Vector2 potential_position = new Vector2(Position.X, Position.Y +1);
-        Cell neighbor = game_world.GetCell(potential_position);
-
-        if ( potential_position.Y < game_world.WorldCanvasSize.Y && (neighbor == null  || neighbor is Water) )
+        potential_position = new Vector2(Position.X, Position.Y + 1);
+        if ( potential_position.Y < game_world.WorldCanvasSize.Y && (neighbor_below == null  || neighbor_below is Water) )
         {   
-            if (neighbor is Water && should_flow)
+            if ( neighbor_below is Water && should_flow && (neighbor_left is not Steam && neighbor_right is not Steam) )
             {
-                game_world.SwapCell(this, neighbor);
+                game_world.SwapCell(this, neighbor_below);
                 return;
             }
-            else if (neighbor == null)
+            else if (neighbor_below == null)
             {
                 game_world.MoveCell(this, potential_position); 
                 return;
@@ -55,17 +59,16 @@ public class Water : Cell
         for (int i = 1; i <= CellStats.WATER_DISPERSAL_RATE; i++)
         {
             potential_position = new Vector2(Position.X -i, Position.Y);
-            neighbor = game_world.GetCell(potential_position);
-            Cell neighbor_below = game_world.GetCell( new Vector2(Position.X, Position.Y +1) );
+            Cell neighbor = game_world.GetCell(potential_position);
 
-            if (neighbor != null && neighbor is not Water)
+            if (neighbor != null && neighbor is not Water && neighbor is not Steam)
             {
                 break;
             }
             
-            if ( left_bias == true && potential_position.X >= 0 && (neighbor == null || neighbor is Water) )
+            if ( left_bias == true && potential_position.X >= 0 && (neighbor == null || neighbor is Water || neighbor is Steam) )
             { 
-                if (neighbor is Water && should_flow)
+                if ( should_flow && (neighbor is Water || neighbor is Steam) )
                 {
                     game_world.SwapCell(this, neighbor);
                     return;
@@ -83,12 +86,13 @@ public class Water : Cell
                 Vector2 position = neighbor_below.Position;
                 game_world.RemoveCell(neighbor_below);
                 game_world.AddCell(new Sand(position, game_world));
+                return;
             }
-
             // Sand Displacement
             if (neighbor_below is Sand && should_displace == true)
             {
                 game_world.SwapCell(this, neighbor_below);
+                return;
             }
         }
 
@@ -96,17 +100,16 @@ public class Water : Cell
         for (int i = 1; i <= CellStats.WATER_DISPERSAL_RATE; i++)
         {
             potential_position = new Vector2(Position.X +i, Position.Y);
-            neighbor = game_world.GetCell(potential_position);
-            Cell neighbor_below = game_world.GetCell( new Vector2(Position.X, Position.Y +1) );
+            Cell neighbor = game_world.GetCell(potential_position);
 
-            if (neighbor != null && neighbor is not Water)
+            if (neighbor != null && neighbor is not Water && neighbor is not Steam)
             {
                 break;
             }
             
             if ( left_bias == false && potential_position.X < game_world.WorldCanvasSize.X && (neighbor == null  || neighbor is Water) ) 
             {   
-                if ( neighbor is Water && should_flow)
+                if ( should_flow && (neighbor is Water || neighbor is Steam) )
                 {
                     game_world.SwapCell(this, neighbor);
                     return;
@@ -124,12 +127,13 @@ public class Water : Cell
                 Vector2 position = neighbor_below.Position;
                 game_world.RemoveCell(neighbor_below);
                 game_world.AddCell(new Sand(position, game_world));
+                return;
             }
-
             // Sand Displacement
             if (neighbor_below is Sand && should_displace == true)
             {
                 game_world.SwapCell(this, neighbor_below);
+                return;
             }
         }
 

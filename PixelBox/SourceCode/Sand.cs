@@ -68,6 +68,7 @@ public class Sand : Cell
         if (neighbor_above is Sand && neighbor_left is Water)
         {
             game_world.SwapCell(this, neighbor_left);
+            return;
         }
 
         // Right
@@ -87,6 +88,7 @@ public class Sand : Cell
         if (neighbor_above is Sand && neighbor_right is Water)
         {
             game_world.SwapCell(this, neighbor_right);
+            return;
         }
 
         // Compression (Into Stone)
@@ -105,6 +107,7 @@ public class Sand : Cell
                 Vector2 position = Position;
                 game_world.RemoveCell(this);
                 game_world.AddCell(new Stone(position, game_world) );
+                return;
             }
         }
         if (neighbor_above is Stone && neighbor_left is Stone && neighbor_right is Stone && neighbor_below is Stone || neighbor_above is Stone && neighbor_left is Stone && neighbor_right is Stone && neighbor_below == null)
@@ -112,6 +115,7 @@ public class Sand : Cell
                 Vector2 position = Position;
                 game_world.RemoveCell(this);
                 game_world.AddCell(new Stone(position, game_world) );
+                return;
         }
 
     }
