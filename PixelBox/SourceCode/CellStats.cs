@@ -12,9 +12,19 @@ public static class CellStats
     public static Texture2D CellTexture {get; private set;}
     public static Dictionary<int, Color> WaterColors {get; private set;}
     public static Dictionary<int, Color> SandColors {get; private set;}
+    public static Dictionary<int, Color> StoneColors {get; private set;}
+    public static Dictionary<int, Color> SteamColors {get; private set;}
     
-    public static int WATER_FLOW_FACTOR = 50; // How often water flows into other water. Lower values = more flow.
-    public static int WATER_DISPERSAL_RATE = 3; // How many additional neighboring cells to check for horizontal movement
+    public static int WATER_FLOW_FACTOR = 150; // How often water flows into other water. Lower values = more flow.
+    public static int WATER_DISPERSAL_RATE = 3; // How many additional neighboring cells to check for horizontal movement.
+    public static int WATER_CONVERSION_CHANCE = 50000; // The chance that water will turn into steam. Higher values = less chance.
+    public static int STONE_EROSION_CHANCE = 1000; // How often water will erode stone. Higher values = less chance.
+    public static int SAND_DISPLACEMENT_CHANCE = 25; // How often sand will be displaced by water. Higher values = less chance.
+    public static int SAND_COMPRESSION_FACTOR = 20; // How many sand cells have to be on top of each other in order to compress into stone.
+    public static int STEAM_DISPERSAL_RATE = 2; // How many additional neighboring cells to check for horizontal movement.
+    public static int STEAM_DISPERSAL_CHANCE = 5; // The chance that steam will seek to flow horizontally to empty spaces. Higher values = less chance.
+    public static int STEAM_FLOW_FACTOR = 25; // How often steam flows into other steam. Lower values = more flow.
+    public static int STEAM_CONVERSION_CHANCE = 25000; // The chance that steam will turn into water. Higher values = less chance.
 
     public static void InitCellStats()
     {
@@ -33,6 +43,20 @@ public static class CellStats
             { 1, new Color(220, 170, 80) },
             { 2, new Color(190, 180, 60) },
             { 3, new Color(230, 210, 90) }
+        };
+        StoneColors = new Dictionary<int, Color>()
+        {
+            { 0, new Color(90, 95, 100) },
+            { 1, new Color(95, 90, 100) },
+            { 2, new Color(95, 95, 100) },
+            { 3, new Color(90, 90, 100) }
+        };
+        SteamColors = new Dictionary<int, Color>()
+        {
+            { 0, new Color(200, 200, 205) },
+            { 1, new Color(200, 205, 210) },
+            { 2, new Color(200, 205, 205) },
+            { 3, new Color(200, 200, 210) }
         };
     }
 

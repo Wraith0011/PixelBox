@@ -23,19 +23,48 @@ public class World
     /// </summary>
     public void Update()
     {   
-        // Get cells in the world
+        // Keep track of what cells need to be updated
         List<Water> water_cells = new List<Water>();
+        List<Sand> sand_cells = new List<Sand>();
+        List<Stone> stone_cells = new List<Stone>();
+        List<Steam> steam_cells = new List<Steam>();
+        
+        // Get cells in the world, and add them to the list of that cell type
         foreach (Cell cell in WorldCells.Values)
         {
-            if (cell is Water water_cell)
+            switch (cell)
             {
-                water_cells.Add(water_cell);
+                case Water water_cell:
+                    water_cells.Add(water_cell);
+                    break;
+                case Sand sand_cell:
+                    sand_cells.Add(sand_cell);
+                    break;
+                case Stone stone_cell:
+                    stone_cells.Add(stone_cell);
+                    break;
+                case Steam steam_cell:
+                    steam_cells.Add(steam_cell);
+                    break;
             }
         }
-        // Update the cells
+
+        // Update the cells by type
         foreach (Water water_cell in water_cells)
         {
             water_cell.Update();
+        }
+        foreach (Sand sand_cell in sand_cells)
+        {
+            sand_cell.Update();
+        }
+        foreach (Stone stone_cell in stone_cells)
+        {
+            stone_cell.Update();
+        }
+        foreach (Steam steam_cell in steam_cells)
+        {
+            steam_cell.Update();
         }
     }
 
@@ -94,6 +123,19 @@ public class World
         // Add both cells back to the dictionary
         WorldCells.Add(cell.Position, cell);
         WorldCells.Add(neighbor.Position, neighbor);
+    }
+
+    /// <summary>
+    /// Moves a cell while keeping track of the WorldCells dictionary. This will override cells if they are present at the new location.
+    /// </summary>
+    public void MoveCell(Cell cell, Vector2 new_position)
+    {
+        // Remove the old position from the world dictionary
+        WorldCells.Remove(cell.Position);
+        // Update the current position
+        cell.Position = new_position;
+        // Update the world dictionary with the new position & cell
+        WorldCells[cell.Position] = cell;
     }
 
     /// <summary>

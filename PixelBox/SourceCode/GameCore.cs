@@ -12,12 +12,16 @@ public class GameCore : Game
     public static Random Random {get; private set;}
     public World GameWorld {get; private set;}
     public Vector2 WorldSize {get; private set;} = new Vector2(100, 100);
-    public enum SelectableCellTypes { Water, Sand };
+    public enum SelectableCellTypes { Water, Sand, Stone, Steam };
     public SelectableCellTypes SelectedCellType {get; private set;} = SelectableCellTypes.Water; // Default selected cell is water
 
     // Variables
     private GraphicsDeviceManager graphics;
     public const int FRAMES_PER_SECOND = 60;
+    private SpriteFont Font {get; set;}
+    private int CellCount {get; set;} = 0;
+    private Vector2 UI_Position_0 = new Vector2(0, 0);
+    private Vector2 UI_Position_1 = new Vector2(0, 50);
 
     public GameCore()
     {   
@@ -25,6 +29,8 @@ public class GameCore : Game
         IsMouseVisible = true;
         Window.AllowUserResizing = true;
         Window.ClientSizeChanged += OnClientSizeChanged;
+
+        Content.RootDirectory = "Content";
 
         TargetElapsedTime = TimeSpan.FromSeconds( 1.0 / FRAMES_PER_SECOND);
         IsFixedTimeStep = true;
@@ -35,10 +41,14 @@ public class GameCore : Game
     protected override void LoadContent()
     {   
         base.LoadContent();
-        // Init WraithLib and a random instance to use
+        // Init WraithLib
         Globals.Initialize(graphics, this.Content);
+
+        // Init
+        Font = Content.Load<SpriteFont>("Font");
         Random = new Random();
 
+        // Init world
         CellStats.InitCellStats();
         GameWorld = new World( new Vector2(WorldSize.X, WorldSize.Y) );
     }
@@ -52,11 +62,12 @@ public class GameCore : Game
 
         ManageMouse();
         SelectCellType();
+        CellCount = GameWorld.WorldCells.Count;
     }
 
-    protected override void Draw(GameTime gameTime)
+    protected override void Draw(GameTime game_time)
     {
-        base.Draw(gameTime);
+        base.Draw(game_time);
         
         // Activate the Canvas, then begin drawing
         GameWorld.WorldCanvas.Activate(Color.DimGray);
@@ -66,13 +77,16 @@ public class GameCore : Game
 
         // End drawing on the canvas
         Globals.Sprite_Batch.End();
-
-        // Draw the Canvas to the screen, and anything else drawn is also to the screen
-        Globals.Sprite_Batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null);
         
+        // Draw the Canvas to the screen, and then anything else drawn is also to the screen
+        Globals.Sprite_Batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null);
         GameWorld.WorldCanvas.Draw(Globals.Sprite_Batch);
 
-        // End drawing to the Canvas
+        // Draw debug info
+        Globals.Sprite_Batch.DrawString(Font, CellCount.ToString(), UI_Position_0, Color.White);
+        Globals.Sprite_Batch.DrawString(Font, "FPS: " + Globals.FPS, UI_Position_1, Color.White);
+        
+        // End drawing to the screen
         Globals.Sprite_Batch.End();
     }
 
@@ -87,6 +101,12 @@ public class GameCore : Game
                     break;
                 case SelectableCellTypes.Sand:
                     GameWorld.TryAddCell( new Sand(Globals.MousePositionOnCanvas, GameWorld) );
+                    break;
+                case SelectableCellTypes.Stone:
+                    GameWorld.TryAddCell( new Stone(Globals.MousePositionOnCanvas, GameWorld) );
+                    break;
+                case SelectableCellTypes.Steam:
+                    GameWorld.TryAddCell( new Steam(Globals.MousePositionOnCanvas, GameWorld) );
                     break;
             }
         }
@@ -106,6 +126,14 @@ public class GameCore : Game
         if ( Globals.CurrentKeyboardState.IsKeyDown(Keys.D2) )
         {
             SelectedCellType = SelectableCellTypes.Sand;
+        }
+        if ( Globals.CurrentKeyboardState.IsKeyDown(Keys.D3) )
+        {
+            SelectedCellType = SelectableCellTypes.Stone;
+        }
+        if ( Globals.CurrentKeyboardState.IsKeyDown(Keys.D4) )
+        {
+            SelectedCellType = SelectableCellTypes.Steam;
         }
     }
 
