@@ -19,6 +19,8 @@ public static class CellStats
     public static Dictionary<int, Color> FireColors {get; private set;}
     public static Dictionary<int, Color> WoodColors {get; private set;}
     public static Dictionary<int, Color> AcidColors {get; private set;}
+    public static Dictionary<int, Color> TornadoColors {get; private set;}
+
 
     public static int WATER_FLOW_FACTOR = 150; // How often water flows into other water. Lower values = more flow.
     public static int WATER_DISPERSAL_RATE = 5; // How many additional neighboring cells to check for horizontal movement.
@@ -31,7 +33,7 @@ public static class CellStats
 
     public static int STEAM_DISPERSAL_RATE = 3; // How many additional neighboring cells to check for horizontal movement.
     public static int STEAM_DISPERSAL_CHANCE = 5; // The chance that steam will seek to flow horizontally to empty spaces. Higher values = less chance.
-    public static int STEAM_FLOW_FACTOR = 25; // How often steam flows into other steam. Lower values = more flow.
+    public static int STEAM_FLOW_FACTOR = 25; // How often steam flows into other steam. Lower values = more flow. (25)
     public static int STEAM_CONVERSION_CHANCE = 25000; // The chance that steam will turn into water. Higher values = less chance.
     
     public static int LAVA_FLOW_FACTOR = 800; // How often lava flows into other lava. Lower values = more flow.
@@ -50,13 +52,22 @@ public static class CellStats
     public static int WOOD_DELETION_FACTOR = 300; // Chance for wood to be deleted when on fire. Higher values = less chance.
     public static int WOOD_FIRE_SPAWN_FACTOR = 10; // Chance for wood to spawn fire at neighboring cells when on fire. Higher values = less chance
 
-    public static int ACID_DELETION_FACOR = 40; // Chance for acid to delete other cells. Higher value = less chance. (4)
-    public static int ACID_REMOVAL_FACTOR = 10; // Chance for acid to despawn upon deleting another cell. Higher value = less chance. (10)
+    public static int ACID_DELETION_FACOR = 70; // Chance for acid to delete other cells. Higher value = less chance. (4)
+    public static int ACID_REMOVAL_FACTOR = 6; // Chance for acid to despawn upon deleting another cell. Higher value = less chance. (10)
     public static int ACID_DISSOLVE_FACTOR = 5000; // Chance for acid to dissolve in water. Higher values = less chance.
     public static int ACID_WATER_DISSOLVE_FACTOR = 1000; // Chance for acid to dissolve water cells. Higher values = less chance.
     public static int ACID_FOG_SPAWN_FACTOR = 1000; // Chance for acid to spawn poison fog. Higher value = less chance.
     
     public static int POISON_FOG_ACID_RAIN_CHANCE = 30000; // Chance for poison fog to turn back into acid. Higher values = less chance.
+
+    public static int TORNADO_FLOW_FACTR = 25; // How often the tornado will swap cells with other tornado cells. Higher values = less often.
+    public static int TORNADO_GROUNDSEARCH_FACTOR = 20; // How often a tornado will attempt to search for the ground. Higher values = less chance.
+    public static int TORNADO_ALTITUDE_FACTOR = 40; // How often a tornado will attempt to raise its altitude. Higher values = less chance.
+    public static int TORNADO_DISPERSAL_FACTOR = 800; // How often a tornado will attempt to search horizontally for neighboring NON-TORNADO cells. Higher values = less chance
+    public static int TORNADO_DESTRUCTION_FACTOR = 10; // How often a tornado will convert cells to steam. Higher values = less chance.
+    public static int TORNADO_DESTRUCTION_RANGE = 10; // The range at which a tornado can convert cells under it into steam. Higher values = MORE range.
+    public static int TORNADO_LIFETIME = 7200; // 2 min
+
 
 
     public static void InitCellStats()
@@ -125,6 +136,13 @@ public static class CellStats
             { 1, new Color(80, 170, 110) },
             { 2, new Color(70, 190, 100) },
             { 3, new Color(80, 180, 100) }
+        };
+        TornadoColors = new Dictionary<int, Color>()
+        {
+            { 0, new Color(180, 180, 185) },
+            { 1, new Color(180, 185, 190) },
+            { 2, new Color(180, 185, 185) },
+            { 3, new Color(180, 180, 190) }
         };
     }
 

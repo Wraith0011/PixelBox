@@ -42,7 +42,10 @@ public class Acid : Water
         // Spawn poison fog
         if ( should_spawn_fog == true && (neighbor_above == null || neighbor_above is Steam || neighbor_above is Water) )
         {
-            game_world.AddCell( new PoisonFog(new Vector2(Position.X, Position.Y - 1), game_world) );
+            Vector2 position = Position;
+            game_world.RemoveCell(this);
+            game_world.AddCell( new PoisonFog(position, game_world) );
+            return;
         }
 
         // Above

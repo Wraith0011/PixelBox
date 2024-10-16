@@ -13,6 +13,7 @@ public class World
     public List<Steam> SteamCells {get; private set;}
     public List<Lava> LavaCells {get; private set;}
     public List<Wood> WoodCells {get; private set;}
+    public List<Tornado> TornadoCells {get; private set;}
 
     public Canvas WorldCanvas {get; set;}
     public Vector2 WorldCanvasSize {get; private set;} // World boundary for cells is based on this. This is the native size of the game, not the scaled canvas size.
@@ -36,6 +37,7 @@ public class World
         SteamCells = new List<Steam>();
         LavaCells = new List<Lava>();
         WoodCells = new List<Wood>();
+        TornadoCells = new List<Tornado>();
         
         // Get cells in the world, and add them to the list of that cell type
         foreach (Cell cell in WorldCells.Values)
@@ -59,6 +61,9 @@ public class World
                     break;
                 case Wood wood_cell:
                     WoodCells.Add(wood_cell);
+                    break;
+                case Tornado tornado_cell:
+                    TornadoCells.Add(tornado_cell);
                     break;
             }
         }
@@ -87,6 +92,10 @@ public class World
         foreach (Wood wood_cell in WoodCells)
         {
             wood_cell.Update();
+        }
+        foreach (Tornado tornado_cell in TornadoCells)
+        {
+            tornado_cell.Update();
         }
     }
 
@@ -158,6 +167,23 @@ public class World
         cell.Position = new_position;
         // Update the world dictionary with the new position & cell
         WorldCells[cell.Position] = cell;
+    }
+    public void TryMoveCell(Cell cell, Vector2 new_position)
+    {
+        bool success;
+        // Attempt to update the world dictionary with the new position & cell
+        success = WorldCells.TryAdd(cell.Position, cell);
+        if (success == true)
+        {
+            // Remove the old position from the world dictionary
+            WorldCells.Remove(cell.Position);
+            // Update the current position
+            cell.Position = new_position;
+        }
+        else if (GetCell(new_position) == null)
+        {
+            MoveCell(cell, new_position);
+        }
     }
 
     /// <summary>

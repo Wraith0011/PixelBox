@@ -13,7 +13,7 @@ public class GameCore : Game
     public static Random Random {get; private set;}
     public World GameWorld {get; private set;}
     public Vector2 WorldSize {get; private set;} = new Vector2(220, 220);
-    public enum SelectableCellTypes { Water, Sand, Stone, Steam, Lava, Smoke, Fire, Wood, Acid };
+    public enum SelectableCellTypes { Water, Sand, Stone, Steam, Lava, Smoke, Fire, Wood, Acid, Tornado };
     public SelectableCellTypes SelectedCellType {get; private set;} = SelectableCellTypes.Water; // Default selected cell is water
 
     // Variables & private properties
@@ -171,6 +171,12 @@ public class GameCore : Game
         if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D9))
         {
             SelectedCellType = SelectableCellTypes.Acid;
+            return;
+        }
+        if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D0))
+        {
+            SelectedCellType = SelectableCellTypes.Tornado;
+            return;
         }
     }
 
@@ -222,6 +228,9 @@ public class GameCore : Game
                             break;
                         case SelectableCellTypes.Acid:
                             GameWorld.TryAddCell( new Acid(grid_coords, GameWorld) );
+                            break;
+                        case SelectableCellTypes.Tornado:
+                            GameWorld.TryAddCell( new Tornado(grid_coords, GameWorld) );
                             break;
                     }
                 }
