@@ -16,23 +16,45 @@ public static class CellStats
     public static Dictionary<int, Color> SteamColors {get; private set;}
     public static Dictionary<int, Color> LavaColors {get; private set;}
     public static Dictionary <int, Color> SmokeColors {get; private set;}
-    
+    public static Dictionary<int, Color> FireColors {get; private set;}
+    public static Dictionary<int, Color> WoodColors {get; private set;}
+    public static Dictionary<int, Color> AcidColors {get; private set;}
+
     public static int WATER_FLOW_FACTOR = 150; // How often water flows into other water. Lower values = more flow.
-    public static int WATER_DISPERSAL_RATE = 3; // How many additional neighboring cells to check for horizontal movement.
+    public static int WATER_DISPERSAL_RATE = 5; // How many additional neighboring cells to check for horizontal movement.
     public static int WATER_CONVERSION_CHANCE = 50000; // The chance that water will turn into steam. Higher values = less chance.
-    public static int STONE_EROSION_CHANCE = 1000; // How often water will erode stone. Higher values = less chance.
-    public static int SAND_DISPLACEMENT_CHANCE = 25; // How often sand will be displaced by water. Higher values = less chance.
-    public static int SAND_COMPRESSION_FACTOR = 50; // How many sand cells have to be on top of each other in order to compress into stone.
-    public static int STEAM_DISPERSAL_RATE = 2; // How many additional neighboring cells to check for horizontal movement.
+    
+    public static int STONE_EROSION_CHANCE = 300; // How often water will erode stone. Higher values = less chance.
+    public static int SAND_DISPLACEMENT_CHANCE = 8; //25 // How often sand will be displaced by water. Higher values = less chance.
+    public static int SAND_COMPRESSION_FACTOR = 10; // How many sand cells have to be on top of each other in order to compress into stone.
+    public static int SAND_COMPRESSION_CHANCE = 1000; // Chance that sand will compress into stone when conditions are met. Higher values = less chance.
+
+    public static int STEAM_DISPERSAL_RATE = 3; // How many additional neighboring cells to check for horizontal movement.
     public static int STEAM_DISPERSAL_CHANCE = 5; // The chance that steam will seek to flow horizontally to empty spaces. Higher values = less chance.
     public static int STEAM_FLOW_FACTOR = 25; // How often steam flows into other steam. Lower values = more flow.
     public static int STEAM_CONVERSION_CHANCE = 25000; // The chance that steam will turn into water. Higher values = less chance.
+    
     public static int LAVA_FLOW_FACTOR = 800; // How often lava flows into other lava. Lower values = more flow.
     public static int LAVA_DISPERSAL_CHANCE = 10; // Chance for lava to move horizontally. Higher values = less chance.
+    public static int LAVA_MELTING_CHANCE = 10; // Chance for lava to melt water and sand. Higher values = less chance.
     public static int LAVA_DISPERSAL_RATE = 1; // How many additional neighboring cells to check for horizontal movement.
+    public static int LAVA_FIRE_CREATION_CHANCE = 40; // Chance for lava to create fire above it. Higher values = less chance.
+
     public static int SMOKE_LIFETIME = 1000; // Lifetime of the smoke before it disappears. Higher values = longer lifetime.
     public static int SMOKE_DELETION_FACTOR = 100; // Chance for smoke to be deleted once its lifetime is over. Higher values = less chance.
-    public static int SMOKE_CREATION_CHANCE = 100;
+
+    public static int FIRE_LIFETIME = 30; // Lifetime of fire before it disappears. Higher values = longer lifetime.
+    public static int FIRE_DELETION_FACTOR = 8; // Chance for fire to be deleted once its lifetime is over. Higher values = less chance.
+    public static int FIRE_SMOKE_CREATION_FACTOR = 100; // Chance for fire to create smoke. Higher values = less chance.
+
+    public static int WOOD_DELETION_FACTOR = 300; // Chance for wood to be deleted when on fire. Higher values = less chance.
+    public static int WOOD_FIRE_SPAWN_FACTOR = 10; // Chance for wood to spawn fire at neighboring cells when on fire. Higher values = less chance
+
+    public static int ACID_DELETION_FACOR = 4; // Chance for acid to delete other cells. Higher value = less chance.
+    public static int ACID_REMOVAL_FACTOR = 10; // Chance for acid to despawn upon deleting another cell. Higher value = less chance.
+    public static int ACID_DISSOLVE_FACTOR = 5000; // Chance for acid to dissolve in water. Higher values = less chance.
+    public static int ACID_WATER_DISSOLVE_FACTOR = 1000; // Chance for acid to dissolve water cells. Higher values = less chance.
+
     public static void InitCellStats()
     {
         CellTexture = CreateCellTexture();
@@ -78,6 +100,27 @@ public static class CellStats
             { 1, new Color(60, 50, 60) },
             { 2, new Color(50, 50, 60) },
             { 3, new Color(60, 50, 50) }
+        };
+        FireColors = new Dictionary<int, Color>()
+        {
+            { 0, new Color(240, 120, 80) },
+            { 1, new Color(240, 160, 90) },
+            { 2, new Color(250, 200, 90) },
+            { 3, new Color(250, 250, 90) }
+        };
+        WoodColors = new Dictionary<int, Color>()
+        {
+            { 0, new Color(90, 80, 70) },
+            { 1, new Color(100, 90, 80) },
+            { 2, new Color(110, 100, 80) },
+            { 3, new Color(90, 100, 80) }
+        };
+        AcidColors = new Dictionary<int, Color>()
+        {
+            { 0, new Color(70, 160, 100) },
+            { 1, new Color(80, 170, 110) },
+            { 2, new Color(70, 190, 100) },
+            { 3, new Color(80, 180, 100) }
         };
     }
 

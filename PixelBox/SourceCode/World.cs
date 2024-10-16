@@ -7,6 +7,12 @@ namespace PixelBox;
 public class World
 {
     public Dictionary<Vector2, Cell> WorldCells {get; set;}
+    public List<Water> WaterCells {get; private set;}
+    public List<Sand> SandCells {get; private set;}
+    public List<Stone> StoneCells {get; private set;}
+    public List<Steam> SteamCells {get; private set;}
+    public List<Lava> LavaCells {get; private set;}
+    public List<Wood> WoodCells {get; private set;}
 
     public Canvas WorldCanvas {get; set;}
     public Vector2 WorldCanvasSize {get; private set;} // World boundary for cells is based on this. This is the native size of the game, not the scaled canvas size.
@@ -24,11 +30,12 @@ public class World
     public void Update()
     {   
         // Keep track of what cells need to be updated
-        List<Water> water_cells = new List<Water>();
-        List<Sand> sand_cells = new List<Sand>();
-        List<Stone> stone_cells = new List<Stone>();
-        List<Steam> steam_cells = new List<Steam>();
-        List<Lava> lava_cells = new List<Lava>();
+        WaterCells = new List<Water>();
+        SandCells = new List<Sand>();
+        StoneCells = new List<Stone>();
+        SteamCells = new List<Steam>();
+        LavaCells = new List<Lava>();
+        WoodCells = new List<Wood>();
         
         // Get cells in the world, and add them to the list of that cell type
         foreach (Cell cell in WorldCells.Values)
@@ -36,43 +43,50 @@ public class World
             switch (cell)
             {
                 case Water water_cell:
-                    water_cells.Add(water_cell);
+                    WaterCells.Add(water_cell);
                     break;
                 case Sand sand_cell:
-                    sand_cells.Add(sand_cell);
+                    SandCells.Add(sand_cell);
                     break;
                 case Stone stone_cell:
-                    stone_cells.Add(stone_cell);
+                    StoneCells.Add(stone_cell);
                     break;
                 case Steam steam_cell:
-                    steam_cells.Add(steam_cell);
+                    SteamCells.Add(steam_cell);
                     break;
                 case Lava lava_cell:
-                    lava_cells.Add(lava_cell);
+                    LavaCells.Add(lava_cell);
+                    break;
+                case Wood wood_cell:
+                    WoodCells.Add(wood_cell);
                     break;
             }
         }
 
         // Update the cells by type
-        foreach (Water water_cell in water_cells)
+        foreach (Water water_cell in WaterCells)
         {
             water_cell.Update();
         }
-        foreach (Sand sand_cell in sand_cells)
+        foreach (Sand sand_cell in SandCells)
         {
             sand_cell.Update();
         }
-        foreach (Stone stone_cell in stone_cells)
+        foreach (Stone stone_cell in StoneCells)
         {
             stone_cell.Update();
         }
-        foreach (Steam steam_cell in steam_cells)
+        foreach (Steam steam_cell in SteamCells)
         {
             steam_cell.Update();
         }
-        foreach (Lava lava_cell in lava_cells)
+        foreach (Lava lava_cell in LavaCells)
         {
             lava_cell.Update();
+        }
+        foreach (Wood wood_cell in WoodCells)
+        {
+            wood_cell.Update();
         }
     }
 
@@ -157,4 +171,5 @@ public class World
         }
         else { return null; }
     }
+
 }

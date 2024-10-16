@@ -26,6 +26,7 @@ public class Sand : Cell
     public void Update()
     {
         bool left_bias = GameCore.Random.Next(0, 2) == 0;
+        bool should_compress = GameCore.Random.Next(0, CellStats.SAND_COMPRESSION_CHANCE) == 0;
 
         // Below
         Vector2 potential_position = new Vector2(Position.X, Position.Y +1);
@@ -92,31 +93,35 @@ public class Sand : Cell
         }
 
         // Compression (Into Stone)
-        int sand_above_count = 0;
-        for (int i = 1; i <= CellStats.SAND_COMPRESSION_FACTOR; i++)
-        {
-            potential_position = new Vector2(Position.X, Position.Y - i);
-            neighbor_above = game_world.GetCell(potential_position);
+        // int sand_above_count = 0;
+        // for (int i = 1; i <= CellStats.SAND_COMPRESSION_FACTOR; i++)
+        // {
+        //     potential_position = new Vector2(Position.X, Position.Y - i);
+        //     neighbor_above = game_world.GetCell(potential_position);
 
-            if (neighbor_above is Sand  || neighbor_above is Stone && IsFalling == false)
-            {
-                sand_above_count++;
-            }
-            if ( neighbor_above is Sand sand && sand.IsFalling == false && (sand_above_count == CellStats.SAND_COMPRESSION_FACTOR) )
-            {
-                Vector2 position = Position;
-                game_world.RemoveCell(this);
-                game_world.AddCell(new Stone(position, game_world) );
-                return;
-            }
-        }
-        if (neighbor_above is Stone && neighbor_left is Stone && neighbor_right is Stone && neighbor_below is Stone || neighbor_above is Stone && neighbor_left is Stone && neighbor_right is Stone && neighbor_below == null)
-        {
-                Vector2 position = Position;
-                game_world.RemoveCell(this);
-                game_world.AddCell(new Stone(position, game_world) );
-                return;
-        }
+        //     if (neighbor_above == null)
+        //     {
+        //         return;
+        //     }
+        //     if ( IsFalling == false && (neighbor_above is Sand sand && sand.IsFalling == false)  || neighbor_above is Stone )
+        //     {
+        //         sand_above_count++;
+        //     }
+        //     if ( sand_above_count == CellStats.SAND_COMPRESSION_FACTOR && should_compress == true)
+        //     {
+        //         Vector2 position = Position;
+        //         game_world.RemoveCell(this);
+        //         game_world.AddCell(new Stone(position, game_world) );
+        //         return;
+        //     }
+        // }
+        // if (neighbor_above is Stone && neighbor_left is Stone && neighbor_right is Stone && neighbor_below is Stone || neighbor_above is Stone && neighbor_left is Stone && neighbor_right is Stone && neighbor_below == null)
+        // {
+        //         Vector2 position = Position;
+        //         game_world.RemoveCell(this);
+        //         game_world.AddCell(new Stone(position, game_world) );
+        //         return;
+        // }
 
     }
 }

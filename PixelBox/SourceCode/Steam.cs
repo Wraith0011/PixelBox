@@ -1,9 +1,8 @@
-using System.Linq.Expressions;
 using Microsoft.Xna.Framework;
 using WraithLib;
 namespace PixelBox;
 
-public class Steam : Cell
+public class Steam : Cell // 43K limit WIP
 {
     World game_world;
     public bool ShouldConvert {get; set;} = false;
@@ -29,12 +28,13 @@ public class Steam : Cell
         bool should_disperse = GameCore.Random.Next(0, CellStats.STEAM_DISPERSAL_CHANCE) == 0;
 
         // Steam to water conversion
-        if (should_convert == true && this is not Smoke)
+        if (should_convert == true && this is not Smoke && this is not Fire)
         {
             Vector2 position = Position;
             game_world.AddCell( new Water(position, game_world) );
         }
-        // Up
+
+        // Up movement
         Vector2 potential_position = new Vector2(Position.X, Position.Y -1);
         Cell neighbor_above = game_world.GetCell(potential_position);
 
@@ -44,7 +44,7 @@ public class Steam : Cell
             {
                 game_world.MoveCell(this, potential_position);
             }
-            else if (neighbor_above is Water)
+            if (neighbor_above is Water || neighbor_above is Lava)
             {
                 game_world.SwapCell(this, neighbor_above);
             }
@@ -54,10 +54,10 @@ public class Steam : Cell
             }
         }
 
-        // Left
+        // Left movement
         for (int i = 1; i <= CellStats.STEAM_DISPERSAL_RATE; i++)
         {
-            potential_position = new Vector2(Position.X -1, Position.Y);
+            potential_position = new Vector2(Position.X -i, Position.Y);
             Cell neighbor_left = game_world.GetCell(potential_position);
 
             if (neighbor_left != null && neighbor_left is not Steam && neighbor_left is not Water)
@@ -68,16 +68,19 @@ public class Steam : Cell
             if ( left_bias == true && potential_position.X >= 0 && (neighbor_left == null || neighbor_left is Steam || neighbor_left is Water) )
             {
                 if (neighbor_left == null && should_disperse == true)
-                {
+                {           
                     game_world.MoveCell(this, potential_position);
+                    return;
                 }
                 else if (neighbor_left is Steam && should_flow == true)
                 {
                     game_world.SwapCell(this, neighbor_left);
+                    return;
                 }
                 else if (neighbor_left is Water)
                 {
                     game_world.SwapCell(this, neighbor_left);
+                    return;
                 }
             }
         }
@@ -85,7 +88,7 @@ public class Steam : Cell
         // Right
         for (int i = 1; i <= CellStats.STEAM_DISPERSAL_RATE; i++)
         {
-            potential_position = new Vector2(Position.X +1, Position.Y);
+            potential_position = new Vector2(Position.X + i, Position.Y);
             Cell neighbor_right = game_world.GetCell(potential_position);
 
             if (neighbor_right != null && neighbor_right is not Steam && neighbor_right is not Water)
@@ -97,14 +100,17 @@ public class Steam : Cell
                 if (neighbor_right == null && should_disperse == true)
                 {
                     game_world.MoveCell(this, potential_position);
+                    return;
                 }
                 else if (neighbor_right is Steam && should_flow == true)
                 {
                     game_world.SwapCell(this, neighbor_right);
+                    return;
                 }
                 else if (neighbor_right is Water)
                 {
                     game_world.SwapCell(this, neighbor_right);
+                    return;
                 }
             }
         }

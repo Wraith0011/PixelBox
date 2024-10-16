@@ -9,23 +9,35 @@ namespace PixelBox;
 
 public class GameCore : Game
 {   
-    // Properties
+    // Public Properties
     public static Random Random {get; private set;}
     public World GameWorld {get; private set;}
-    public Vector2 WorldSize {get; private set;} = new Vector2(150, 150);
-    public enum SelectableCellTypes { Water, Sand, Stone, Steam, Lava, Smoke };
+    public Vector2 WorldSize {get; private set;} = new Vector2(220, 220);
+    public enum SelectableCellTypes { Water, Sand, Stone, Steam, Lava, Smoke, Fire, Wood, Acid };
     public SelectableCellTypes SelectedCellType {get; private set;} = SelectableCellTypes.Water; // Default selected cell is water
 
-    // Variables
+    // Variables & private properties
     private GraphicsDeviceManager graphics;
     private int ScrollValue {get; set;} = 1;
-    public const int FRAMES_PER_SECOND = 60;
+    public const int FRAMES_PER_SECOND = 60; // 2 minimum
     private SpriteFont Font {get; set;}
     private int CellCount {get; set;} = 0;
+
+    // UI
+    private Color UI_Color = Color.Yellow;
     private Vector2 UI_Position_0 = new Vector2(0, 0);
-    private Vector2 UI_Position_1 = new Vector2(0, 50);
-    private Vector2 UI_Position_2 = new Vector2(0, 100);
-    private Vector2 UI_Position_3 = new Vector2(0, 150);
+    private Vector2 UI_Position_1 = new Vector2(0, 20);
+    private Vector2 UI_Position_2 = new Vector2(0, 40);
+    private Vector2 UI_Position_3 = new Vector2(0, 60);
+    private Vector2 UI_Position_4 = new Vector2(0, 80);
+    private Vector2 UI_Position_5 = new Vector2(0, 100);
+    private Vector2 UI_Position_6 = new Vector2(0, 120);
+    private Vector2 UI_Position_7 = new Vector2(0, 140);
+    private Vector2 UI_Position_8 = new Vector2(0, 160);
+    private Vector2 UI_Position_9 = new Vector2(0, 180);
+    private Vector2 UI_Position_10 = new Vector2(0, 200);
+    private Vector2 UI_Position_11 = new Vector2(0, 220);
+
 
     public GameCore()
     {   
@@ -45,10 +57,11 @@ public class GameCore : Game
     protected override void LoadContent()
     {   
         base.LoadContent();
+
         // Init WraithLib
         Globals.Initialize(graphics, this.Content);
 
-        // Init
+        // Init general
         Font = Content.Load<SpriteFont>("Font");
         Random = new Random();
 
@@ -61,9 +74,12 @@ public class GameCore : Game
     {
         base.Update(game_time);
 
+        // Update WraithLib
         Globals.Update(game_time, GameWorld.WorldCanvas);
-        GameWorld.Update();
 
+        // Update game world
+        GameWorld.Update();
+        
         ManageMouse();
         SelectCellType();
         CellCount = GameWorld.WorldCells.Count;
@@ -98,7 +114,7 @@ public class GameCore : Game
         int scroll_delta = (Globals.CurrentMouseState.ScrollWheelValue - Globals.PreviousMouseState.ScrollWheelValue) / 120;
         ScrollValue += scroll_delta * 2;
         if (ScrollValue < 2) { ScrollValue = 2; }
-        else if (ScrollValue > 60) { ScrollValue = 60; }
+        else if (ScrollValue > 30) { ScrollValue = 30; }
 
         if (Globals.CurrentMouseState.LeftButton == ButtonState.Pressed && Globals.IsMouseInBounds)
         {
@@ -115,26 +131,46 @@ public class GameCore : Game
         if ( Globals.CurrentKeyboardState.IsKeyDown(Keys.D1) )
         {
             SelectedCellType = SelectableCellTypes.Water;
+            return;
         }
         if ( Globals.CurrentKeyboardState.IsKeyDown(Keys.D2) )
         {
             SelectedCellType = SelectableCellTypes.Sand;
+            return;
         }
         if ( Globals.CurrentKeyboardState.IsKeyDown(Keys.D3) )
         {
             SelectedCellType = SelectableCellTypes.Stone;
+            return;
         }
         if ( Globals.CurrentKeyboardState.IsKeyDown(Keys.D4) )
         {
             SelectedCellType = SelectableCellTypes.Steam;
+            return;
         }
         if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D5))
         {
             SelectedCellType = SelectableCellTypes.Lava;
+            return;
         }
         if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D6))
         {
             SelectedCellType = SelectableCellTypes.Smoke;
+            return;
+        }
+        if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D7))
+        {
+            SelectedCellType = SelectableCellTypes.Fire;
+            return;
+        }
+        if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D8))
+        {
+            SelectedCellType = SelectableCellTypes.Wood;
+            return;
+        }
+        if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D9))
+        {
+            SelectedCellType = SelectableCellTypes.Acid;
         }
     }
 
@@ -178,6 +214,15 @@ public class GameCore : Game
                         case SelectableCellTypes.Smoke:
                             GameWorld.TryAddCell( new Smoke(grid_coords, GameWorld) );
                             break;
+                        case SelectableCellTypes.Fire:
+                            GameWorld.TryAddCell( new Fire(grid_coords, GameWorld) );
+                            break;
+                        case SelectableCellTypes.Wood:
+                            GameWorld.TryAddCell( new Wood(grid_coords, GameWorld) );
+                            break;
+                        case SelectableCellTypes.Acid:
+                            GameWorld.TryAddCell( new Acid(grid_coords, GameWorld) );
+                            break;
                     }
                 }
             }
@@ -204,10 +249,18 @@ public class GameCore : Game
 
     private void DrawUI()
     {
-        Globals.Sprite_Batch.DrawString(Font, "Cell Count: " + CellCount.ToString(), UI_Position_0, Color.White);
-        Globals.Sprite_Batch.DrawString(Font, "FPS: " + Globals.FPS, UI_Position_1, Color.White);
-        Globals.Sprite_Batch.DrawString(Font, "Selected: " + SelectedCellType.ToString(), UI_Position_2, Color.White);
-        Globals.Sprite_Batch.DrawString(Font, "Brush Size: " + ScrollValue/2, UI_Position_3, Color.Aquamarine);
+        Globals.Sprite_Batch.DrawString(Font, "FPS: " + Globals.FPS, UI_Position_0, UI_Color);
+        Globals.Sprite_Batch.DrawString(Font, "Selected: " + SelectedCellType.ToString(), UI_Position_2, UI_Color);
+        Globals.Sprite_Batch.DrawString(Font, "" + GameWorld.GetCell(Globals.MousePositionOnCanvas), new Vector2(Globals.MousePosition.X + 20, Globals.MousePosition.Y - 8), UI_Color);
+        Globals.Sprite_Batch.DrawString(Font, "Brush Size: " + ScrollValue/2, UI_Position_4, UI_Color);
+        
+        Globals.Sprite_Batch.DrawString(Font, "Water Cells: " + GameWorld.WaterCells.Count, UI_Position_6, UI_Color);
+        Globals.Sprite_Batch.DrawString(Font, "Sand Cells: " + GameWorld.SandCells.Count, UI_Position_7, UI_Color);
+        Globals.Sprite_Batch.DrawString(Font, "Stone Cells: " + GameWorld.StoneCells.Count, UI_Position_8, UI_Color);
+        Globals.Sprite_Batch.DrawString(Font, "Steam Cells: " + GameWorld.SteamCells.Count, UI_Position_9, UI_Color);
+        Globals.Sprite_Batch.DrawString(Font, "Lava Cells: " + GameWorld.LavaCells.Count, UI_Position_10, UI_Color);
+        Globals.Sprite_Batch.DrawString(Font, "Wood Cells: " + GameWorld.WoodCells.Count, UI_Position_11, UI_Color);
+
     }
 
 }
