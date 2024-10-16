@@ -39,8 +39,6 @@ public class Tornado : Cell
         Cell immediate_neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
         Cell neighbor_left;
         Cell neighbor_right;
-        
-        // Search for neighboring tornado cells and move towards them
 
         // Find the ground
         if (should_search_for_ground == true && should_disperse == false && should_raise_altitude == false)
@@ -80,6 +78,7 @@ public class Tornado : Cell
                 }
             }
         }
+        // Search for neighboring tornado cells and move towards them
         // Right
         for (int x_position = (int)Position.X; x_position < game_world.WorldCanvasSize.X; x_position++)
         {
