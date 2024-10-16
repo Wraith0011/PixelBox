@@ -69,7 +69,7 @@ public class Tornado : Cell
                                 return;
                             }
                         }
-                        else
+                        else if (cell is not Steam)
                         {
                             game_world.TryMoveCell( this, new Vector2(Position.X, Position.Y + 1) );
                             return;
