@@ -37,6 +37,7 @@ public class GameCore : Game
     private Vector2 UI_Position_9 = new Vector2(0, 180);
     private Vector2 UI_Position_10 = new Vector2(0, 200);
     private Vector2 UI_Position_11 = new Vector2(0, 220);
+    private Vector2 UI_Position_12 = new Vector2(0, 240);
 
 
     public GameCore()
@@ -269,6 +270,7 @@ public class GameCore : Game
         Globals.Sprite_Batch.DrawString(Font, "Steam Cells: " + GameWorld.SteamCells.Count, UI_Position_9, UI_Color);
         Globals.Sprite_Batch.DrawString(Font, "Lava Cells: " + GameWorld.LavaCells.Count, UI_Position_10, UI_Color);
         Globals.Sprite_Batch.DrawString(Font, "Wood Cells: " + GameWorld.WoodCells.Count, UI_Position_11, UI_Color);
+        Globals.Sprite_Batch.DrawString(Font, "Tornado Cells: " + GameWorld.TornadoCells.Count, UI_Position_12, UI_Color);
     }
 
 }

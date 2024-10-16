@@ -39,7 +39,7 @@ public class Tornado : Cell
         Cell immediate_neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
         Cell neighbor_left;
         Cell neighbor_right;
-
+        
         // Find the ground
         if (should_search_for_ground == true && should_disperse == false && should_raise_altitude == false)
         {
@@ -63,7 +63,7 @@ public class Tornado : Cell
                         else if (cell != null && cell is not Tornado && cell is not Steam && (cell.Position.Y - Position.Y) < CellStats.TORNADO_DESTRUCTION_RANGE  && should_convert == true)
                         {
                             game_world.SwapCell(this, cell);
-                            if (cell is not Water || cell is not Steam)
+                            if (cell is not Water && cell is not Steam)
                             {
                                 game_world.AddCell( new Steam(cell.Position, game_world) );
                                 return;
