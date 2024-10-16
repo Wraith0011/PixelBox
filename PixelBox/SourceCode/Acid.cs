@@ -9,6 +9,7 @@ public class Acid : Water
     private bool should_remove;
     private bool should_dissolve;
     private bool should_water_dissolve;
+    private bool should_spawn_fog;
 
     public Acid(Vector2 position, World world) : base(position, world)
     {
@@ -31,11 +32,18 @@ public class Acid : Water
         should_remove = GameCore.Random.Next(0, CellStats.ACID_REMOVAL_FACTOR) == 0;
         should_dissolve = GameCore.Random.Next(0, CellStats.ACID_DISSOLVE_FACTOR) == 0;
         should_water_dissolve = GameCore.Random.Next(0, CellStats.ACID_WATER_DISSOLVE_FACTOR) == 0;
+        should_spawn_fog = GameCore.Random.Next(0, CellStats.ACID_FOG_SPAWN_FACTOR) == 0;
 
         Cell neighbor_above = game_world.GetCell( new Vector2(Position.X, Position.Y - 1) );
         Cell neighbor_below = game_world.GetCell( new Vector2(Position.X, Position.Y + 1) );
         Cell neighbor_left  = game_world.GetCell( new Vector2(Position.X - 1, Position.Y) );
         Cell neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
+
+        // Spawn poison fog
+        if ( should_spawn_fog == true && (neighbor_above == null || neighbor_above is Steam || neighbor_above is Water) )
+        {
+            game_world.AddCell( new PoisonFog(new Vector2(Position.X, Position.Y - 1), game_world) );
+        }
 
         // Above
         if (neighbor_above != null && neighbor_above is not Water)

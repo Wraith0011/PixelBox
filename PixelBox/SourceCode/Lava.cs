@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 namespace PixelBox;
 
@@ -64,7 +65,7 @@ public class Lava : Cell // 50K cell limit
                 {
                     Vector2 position = new Vector2(x, y);
                     Cell cell = game_world.GetCell(position);
-                    if (cell is Water)
+                    if (cell is Water && cell is not Acid)
                     {
                         game_world.AddCell( new Steam(position, game_world) );
                         return;
