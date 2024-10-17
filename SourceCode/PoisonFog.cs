@@ -13,9 +13,11 @@ public class PoisonFog : Smoke
         world.TryAddCell(this);
         game_world = world;
     }
+
     public override void Update()
     {
         base.Update();
+        
         should_convert = GameCore.Random.Next(0, CellStats.POISON_FOG_ACID_RAIN_CHANCE) == 0;
 
         if (should_convert == true)

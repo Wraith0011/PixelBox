@@ -14,7 +14,7 @@ public class GameCore : Game
     public static Random Random {get; private set;}
     public World GameWorld {get; private set;}
     public Vector2 WorldSize {get; private set;} = new Vector2(220, 220);
-    public enum SelectableCellTypes { Water, Sand, Stone, Steam, Lava, Smoke, Fire, Wood, Acid, Tornado };
+    public enum SelectableCellTypes { Water, Sand, Stone, Steam, Lava, Smoke, Fire, Wood, Acid, PoisonFog, Tornado };
     public SelectableCellTypes SelectedCellType {get; private set;} = SelectableCellTypes.Water; // Default selected cell is water
 
     // Variables & private properties
@@ -137,35 +137,38 @@ public class GameCore : Game
             switch (key)
             {
                 case Keys.D1:
-                        SelectedCellType = SelectableCellTypes.Water;
-                        return;
+                    SelectedCellType = SelectableCellTypes.Water;
+                    return;
                 case Keys.D2:
-                        SelectedCellType = SelectableCellTypes.Water;
-                        return;
+                    SelectedCellType = SelectableCellTypes.Sand;
+                    return;
                 case Keys.D3:
-                        SelectedCellType = SelectableCellTypes.Water;
-                        return;
+                    SelectedCellType = SelectableCellTypes.Stone;
+                    return;
                 case Keys.D4:
-                        SelectedCellType = SelectableCellTypes.Water;
-                        return;
+                    SelectedCellType = SelectableCellTypes.Steam;
+                    return;
                 case Keys.D5:
-                        SelectedCellType = SelectableCellTypes.Water;
-                        return;
+                    SelectedCellType = SelectableCellTypes.Lava;
+                    return;
                 case Keys.D6:
-                        SelectedCellType = SelectableCellTypes.Water;
-                        return;
+                    SelectedCellType = SelectableCellTypes.Smoke;
+                    return;
                 case Keys.D7:
-                        SelectedCellType = SelectableCellTypes.Water;
-                        return;
+                    SelectedCellType = SelectableCellTypes.Fire;
+                    return;
                 case Keys.D8:
-                        SelectedCellType = SelectableCellTypes.Water;
-                        return;
+                    SelectedCellType = SelectableCellTypes.Wood;
+                    return;
                 case Keys.D9:
-                        SelectedCellType = SelectableCellTypes.Water;
-                        return;
+                    SelectedCellType = SelectableCellTypes.Acid;
+                    return;
                 case Keys.D0:
-                        SelectedCellType = SelectableCellTypes.Water;
-                        return;
+                    SelectedCellType = SelectableCellTypes.PoisonFog;
+                    return;
+                case Keys.Subtract:
+                    SelectedCellType = SelectableCellTypes.Tornado;
+                    return;
             }
         }
     }
@@ -218,6 +221,9 @@ public class GameCore : Game
                             break;
                         case SelectableCellTypes.Acid:
                             GameWorld.TryAddCell( new Acid(grid_coords, GameWorld) );
+                            break;
+                        case SelectableCellTypes.PoisonFog:
+                            GameWorld.TryAddCell( new PoisonFog(grid_coords, GameWorld) );
                             break;
                         case SelectableCellTypes.Tornado:
                             GameWorld.TryAddCell( new Tornado(grid_coords, GameWorld) );
