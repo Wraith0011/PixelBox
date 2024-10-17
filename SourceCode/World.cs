@@ -18,10 +18,10 @@ public class World
     public Canvas WorldCanvas {get; set;}
     public Vector2 WorldCanvasSize {get; private set;} // World boundary for cells is based on this. This is the native size of the game, not the scaled canvas size.
 
-    public World(Vector2 world_canvas_size)
+    public World(Vector2 world_canvas_size, Color world_canvas_color)
     {
         WorldCells = new Dictionary<Vector2, Cell>();
-        WorldCanvas = new Canvas((int)world_canvas_size.X, (int)world_canvas_size.Y);
+        WorldCanvas = new Canvas((int)world_canvas_size.X, (int)world_canvas_size.Y, world_canvas_color);
         WorldCanvasSize = world_canvas_size;
     }
 

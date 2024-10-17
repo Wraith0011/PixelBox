@@ -66,7 +66,7 @@ public static class CellStats
     public static int TORNADO_DISPERSAL_FACTOR = 800; // How often a tornado will attempt to search horizontally for neighboring NON-TORNADO cells. Higher values = less chance
     public static int TORNADO_DESTRUCTION_FACTOR = 10; // How often a tornado will convert cells to steam. Higher values = less chance.
     public static int TORNADO_DESTRUCTION_RANGE = 10; // The range at which a tornado can convert cells under it into steam. Higher values = MORE range.
-    public static int TORNADO_LIFETIME = 60* 20; // The lifetime of a tornado in frames that it will be active. 60 frames = 1 second... hopefully
+    public static int TORNADO_LIFETIME = 60* 30; // The lifetime of a tornado in frames that it will be active. 60 frames = 1 second... hopefully
     public static int TORNADO_DELETION_FACTOR = 80; // The chance for a tornado to be deleted upon the end of its lifetime. Higher values = less chance.
 
 

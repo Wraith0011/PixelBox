@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,32 +15,22 @@ public class GameCore : Game
     public static Random Random {get; private set;}
     public World GameWorld {get; private set;}
     public Vector2 WorldSize {get; private set;} = new Vector2(220, 220);
+    
     public enum SelectableCellTypes { Water, Sand, Stone, Steam, Lava, Smoke, Fire, Wood, Acid, PoisonFog, Tornado };
     public SelectableCellTypes SelectedCellType {get; private set;} = SelectableCellTypes.Water; // Default selected cell is water
+    public DayNightCycle TimeCycle;
+    public Dictionary<int, Color> TimeCycleColors {get; private set;}
+    public int TimeCycleLength = 60; // Seconds
 
     // Variables & private properties
     private GraphicsDeviceManager graphics;
-    private int ScrollValue {get; set;} = 1;
+    public int ScrollValue {get; private set;} = 1;
     public const int FRAMES_PER_SECOND = 60; // 2 minimum
-    private SpriteFont Font {get; set;}
+    public SpriteFont Font {get; private set;}
     private int CellCount {get; set;} = 0;
 
     // UI
-    private Color UI_Color = Color.Yellow;
-    private Vector2 UI_Position_0 = new Vector2(0, 0);
-    private Vector2 UI_Position_1 = new Vector2(0, 20);
-    private Vector2 UI_Position_2 = new Vector2(0, 40);
-    private Vector2 UI_Position_3 = new Vector2(0, 60);
-    private Vector2 UI_Position_4 = new Vector2(0, 80);
-    private Vector2 UI_Position_5 = new Vector2(0, 100);
-    private Vector2 UI_Position_6 = new Vector2(0, 120);
-    private Vector2 UI_Position_7 = new Vector2(0, 140);
-    private Vector2 UI_Position_8 = new Vector2(0, 160);
-    private Vector2 UI_Position_9 = new Vector2(0, 180);
-    private Vector2 UI_Position_10 = new Vector2(0, 200);
-    private Vector2 UI_Position_11 = new Vector2(0, 220);
-    private Vector2 UI_Position_12 = new Vector2(0, 240);
-
+    AwfulUI UI;
 
     public GameCore()
     {   
@@ -69,19 +60,34 @@ public class GameCore : Game
 
         // Init world
         CellStats.InitCellStats();
-        GameWorld = new World( new Vector2(WorldSize.X, WorldSize.Y) );
+        GameWorld = new World( new Vector2(WorldSize.X, WorldSize.Y), new Color(100, 100, 180));
+
+        // Init day and night cycle
+        TimeCycleColors = new Dictionary<int, Color>()
+        {
+            { 0, new Color(100, 100, 180) },
+            { 1, new Color(140, 140, 180) },
+            { 2, new Color(170, 110, 100) },
+            { 3, new Color(60, 60, 120) }
+        };
+        TimeCycle = new DayNightCycle(TimeCycleLength, GameWorld.WorldCanvas, TimeCycleColors[0], TimeCycleColors[1], TimeCycleColors[2], TimeCycleColors[3], DayNightCycle.TimeOfDay.Morning );
+
+        // Init UI
+        UI = new AwfulUI(this);
     }
 
     protected override void Update(GameTime game_time)
     {
         base.Update(game_time);
-
+        
         // Update WraithLib
         Globals.Update(game_time, GameWorld.WorldCanvas);
 
         // Update game world
         GameWorld.Update();
-        
+        TimeCycle.Update();
+
+        // Allow user input
         ManageMouse();
         SelectCellType();
         CellCount = GameWorld.WorldCells.Count;
@@ -92,7 +98,7 @@ public class GameCore : Game
         base.Draw(game_time);
         
         // Activate the Canvas, then begin drawing
-        GameWorld.WorldCanvas.Activate(Color.DimGray);
+        GameWorld.WorldCanvas.Activate();
         Globals.Sprite_Batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null);
         
         GameWorld.Draw();
@@ -104,7 +110,8 @@ public class GameCore : Game
         Globals.Sprite_Batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null);
         GameWorld.WorldCanvas.Draw(Globals.Sprite_Batch);
 
-        DrawUI();
+        // Draw the UI in screen space
+        UI.Draw();
         
         // End drawing to the screen
         Globals.Sprite_Batch.End();
@@ -252,20 +259,5 @@ public class GameCore : Game
         }
     }
 
-    private void DrawUI()
-    {
-        Globals.Sprite_Batch.DrawString(Font, "FPS: " + Globals.FPS, UI_Position_0, UI_Color);
-        Globals.Sprite_Batch.DrawString(Font, "Selected: " + SelectedCellType.ToString(), UI_Position_2, UI_Color);
-        Globals.Sprite_Batch.DrawString(Font, "" + GameWorld.GetCell(Globals.MousePositionOnCanvas), new Vector2(Globals.MousePosition.X + 20, Globals.MousePosition.Y - 8), UI_Color);
-        Globals.Sprite_Batch.DrawString(Font, "Brush Size: " + ScrollValue/2, UI_Position_4, UI_Color);
-        
-        Globals.Sprite_Batch.DrawString(Font, "Water Cells: " + GameWorld.WaterCells.Count, UI_Position_6, UI_Color);
-        Globals.Sprite_Batch.DrawString(Font, "Sand Cells: " + GameWorld.SandCells.Count, UI_Position_7, UI_Color);
-        Globals.Sprite_Batch.DrawString(Font, "Stone Cells: " + GameWorld.StoneCells.Count, UI_Position_8, UI_Color);
-        Globals.Sprite_Batch.DrawString(Font, "Steam Cells: " + GameWorld.SteamCells.Count, UI_Position_9, UI_Color);
-        Globals.Sprite_Batch.DrawString(Font, "Lava Cells: " + GameWorld.LavaCells.Count, UI_Position_10, UI_Color);
-        Globals.Sprite_Batch.DrawString(Font, "Wood Cells: " + GameWorld.WoodCells.Count, UI_Position_11, UI_Color);
-        Globals.Sprite_Batch.DrawString(Font, "Tornado Cells: " + GameWorld.TornadoCells.Count, UI_Position_12, UI_Color);
-    }
 
 }
