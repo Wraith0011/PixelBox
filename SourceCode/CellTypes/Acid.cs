@@ -44,33 +44,6 @@ public class Acid : Water
             return;
         }
 
-        // Above
-        // if (neighbor_above != null && neighbor_above is not Water && neighbor_above is not Tornado)
-        // {
-        //     if (should_delete == true)
-        //     {
-        //         game_world.RemoveCell(neighbor_above);
-        //         if (should_remove == true)
-        //         {
-        //             game_world.RemoveCell(this);
-        //         }
-        //     }
-        //     return;
-        // }
-        // else if ( neighbor_above is Water && neighbor_above is not Acid && (should_dissolve == true || should_water_dissolve == true) )
-        // {
-        //     if (should_dissolve == true)
-        //     {
-        //         game_world.RemoveCell(this);
-        //         return;
-        //     }
-        //     if (should_water_dissolve == true)
-        //     {
-        //         game_world.RemoveCell(neighbor_above);
-        //         return;
-        //     }
-        // }
-
         // Below
         if (neighbor_below != null && neighbor_below is not Water && neighbor_below is not Tornado)
         {
