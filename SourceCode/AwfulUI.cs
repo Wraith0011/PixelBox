@@ -25,6 +25,8 @@ public class AwfulUI
     private Vector2 UI_Position_12 = new Vector2(0, 240);
     private Vector2 UI_Position_13 = new Vector2(0, 280);
     private Vector2 UI_Position_14 = new Vector2(0, 300);
+    private Vector2 UI_Position_15 = new Vector2(0, 340);
+    private Vector2 UI_Position_16 = new Vector2(0, 360);
 
     public AwfulUI(GameCore game_core)
     {
@@ -49,7 +51,9 @@ public class AwfulUI
         Globals.Sprite_Batch.DrawString(Font, "Tornado Cells: " + GameWorld.TornadoCells.Count, UI_Position_12, UI_Color);
 
         Globals.Sprite_Batch.DrawString(Font, "Time: " + game_core.TimeCycle.CurrentTimeOfDay, UI_Position_13, UI_Color);
-        Globals.Sprite_Batch.DrawString(Font, game_core.TimeCycle.GetNextTimeOfDay(game_core.TimeCycle.CurrentTimeOfDay) + " in: " + (game_core.TimeCycle.CycleDuration - game_core.TimeCycle.Time), UI_Position_14, UI_Color);
+        Globals.Sprite_Batch.DrawString(Font, game_core.TimeCycle.GetNextTimeOfDay(game_core.TimeCycle.CurrentTimeOfDay) + " in: " + (int)(game_core.TimeCycle.CycleDuration - game_core.TimeCycle.Time)/60, UI_Position_14, UI_Color);
+
+        Globals.Sprite_Batch.DrawString(Font, "Controlling Lag? " + game_core.CONTROLLING_LAG, UI_Position_15, UI_Color);
     }
 
 }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,10 +12,20 @@ public class GameCore : Game
     // Public Properties
     public static Random Random {get; private set;}
     public World GameWorld {get; private set;}
-    public Vector2 WorldSize {get; private set;} = new Vector2(220, 220);
+    public Vector2 WorldSize {get; private set;} = new Vector2(300, 200);
+
+    // Monitor lag
+    public bool LAG_MONITOR = true; // Enable or disable the lag monitor
+    public bool CONTROLLING_LAG = false;
+    public bool WAS_ACTIVE = false; // Track previous window state 
+    public Timer LagTimer;
+    public int LAG_FPS_LIMIT = 30; // FPS limit before lag algorithm kicks in
+    public int LAG_DELETION_RATE = 50; // How many cells will be deleted when lag is detected
     
     public enum SelectableCellTypes { Water, Sand, Stone, Steam, Lava, Smoke, Fire, Wood, Acid, PoisonFog, Tornado };
     public SelectableCellTypes SelectedCellType {get; private set;} = SelectableCellTypes.Water; // Default selected cell is water
+   
+    // Time cycle
     public DayNightCycle TimeCycle;
     public Dictionary<int, Color> TimeCycleColors {get; private set;}
     public int TimeCycleLength = 60; // Seconds
@@ -27,7 +35,6 @@ public class GameCore : Game
     public int ScrollValue {get; private set;} = 1;
     public const int FRAMES_PER_SECOND = 60; // 2 minimum
     public SpriteFont Font {get; private set;}
-    private int CellCount {get; set;} = 0;
 
     // UI
     AwfulUI UI;
@@ -43,6 +50,7 @@ public class GameCore : Game
 
         TargetElapsedTime = TimeSpan.FromSeconds( 1.0 / FRAMES_PER_SECOND);
         IsFixedTimeStep = true;
+
     }
 
     protected override void Initialize() { base.Initialize(); }
@@ -53,6 +61,7 @@ public class GameCore : Game
 
         // Init WraithLib
         Globals.Initialize(graphics, this.Content);
+        LagTimer = new Timer();
 
         // Init general
         Font = Content.Load<SpriteFont>("Font");
@@ -79,7 +88,8 @@ public class GameCore : Game
     protected override void Update(GameTime game_time)
     {
         base.Update(game_time);
-        
+        LagTimer.Update();
+
         // Update WraithLib
         Globals.Update(game_time, GameWorld.WorldCanvas);
 
@@ -88,9 +98,10 @@ public class GameCore : Game
         TimeCycle.Update();
 
         // Allow user input
-        ManageMouse();
+        if (LAG_MONITOR == true && Globals.FPS > LAG_FPS_LIMIT) { ManageMouse(); }
         SelectCellType();
-        CellCount = GameWorld.WorldCells.Count;
+
+        MonitorLag();
     }
 
     protected override void Draw(GameTime game_time)
@@ -259,5 +270,61 @@ public class GameCore : Game
         }
     }
 
+    private void MonitorLag()
+    {
+        int cell_deletion_rate = LAG_DELETION_RATE;
+        bool steam_cleared = false;
+        CONTROLLING_LAG = false;
+        // Monitor the amount of lag
+
+        // If screen is not active, Pause the timer and return
+        if (IsActive == false)
+        { 
+            WAS_ACTIVE = false; 
+            LagTimer.Pause(); 
+            return; 
+        }
+        // If the screen is activated
+        if (WAS_ACTIVE == false && IsActive == true)
+        {
+            WAS_ACTIVE = true;
+            LagTimer.Start(3);
+        }
+
+        // Control lag when needed
+        if (IsActive == true && Globals.FPS <= LAG_FPS_LIMIT && LAG_MONITOR == true && LagTimer.Active == false)
+        {
+            Console.WriteLine("Controlling lag. Timer is: " + LagTimer.Active + " " + LagTimer.ElapsedTime);
+            CONTROLLING_LAG = true;
+            // Remove all steam
+            if (steam_cleared == false)
+            {
+                foreach (var kvp in GameWorld.WorldCells)
+                {
+                    Cell cell = kvp.Value;
+                    if (cell is Steam)
+                    {
+                        GameWorld.RemoveCell(cell);
+                        steam_cleared = true;
+                    }
+                }
+            }
+
+            // Remove cells until lag stops
+            int count = 0;
+            if (GameWorld.WorldCells.Count > cell_deletion_rate)
+            {
+                foreach (var kvp in GameWorld.WorldCells) 
+                {
+                    Cell cell = kvp.Value;
+                    if (count < cell_deletion_rate)
+                    {
+                        GameWorld.RemoveCell(cell);
+                        count++;
+                    }
+                }
+            }
+        }
+    }
 
 }

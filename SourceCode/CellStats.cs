@@ -53,7 +53,7 @@ public static class CellStats
     public static int WOOD_FIRE_SPAWN_FACTOR = 10; // Chance for wood to spawn fire at neighboring cells when on fire. Higher values = less chance
 
     public static int ACID_DELETION_FACOR = 70; // Chance for acid to delete other cells. Higher value = less chance. (4)
-    public static int ACID_REMOVAL_FACTOR = 6; // Chance for acid to despawn upon deleting another cell. Higher value = less chance. (10)
+    public static int ACID_REMOVAL_FACTOR = 3; // Chance for acid to despawn upon deleting another cell. Higher value = less chance. (10)
     public static int ACID_DISSOLVE_FACTOR = 5000; // Chance for acid to dissolve in water. Higher values = less chance.
     public static int ACID_WATER_DISSOLVE_FACTOR = 1000; // Chance for acid to dissolve water cells. Higher values = less chance.
     public static int ACID_FOG_SPAWN_FACTOR = 1000; // Chance for acid to spawn poison fog. Higher value = less chance.

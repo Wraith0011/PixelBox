@@ -34,13 +34,9 @@ public class Acid : Water
         should_water_dissolve = GameCore.Random.Next(0, CellStats.ACID_WATER_DISSOLVE_FACTOR) == 0;
         should_spawn_fog = GameCore.Random.Next(0, CellStats.ACID_FOG_SPAWN_FACTOR) == 0;
 
-        Cell neighbor_above = game_world.GetCell( new Vector2(Position.X, Position.Y - 1) );
-        Cell neighbor_below = game_world.GetCell( new Vector2(Position.X, Position.Y + 1) );
-        Cell neighbor_left  = game_world.GetCell( new Vector2(Position.X - 1, Position.Y) );
-        Cell neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
 
         // Spawn poison fog
-        if ( should_spawn_fog == true && (neighbor_above == null || neighbor_above is Steam || neighbor_above is Water) )
+        if ( should_spawn_fog == true )
         {
             Vector2 position = Position;
             game_world.RemoveCell(this);
@@ -49,34 +45,34 @@ public class Acid : Water
         }
 
         // Above
-        if (neighbor_above != null && neighbor_above is not Water)
-        {
-            if (should_delete == true)
-            {
-                game_world.RemoveCell(neighbor_above);
-                if (should_remove == true)
-                {
-                    game_world.RemoveCell(this);
-                }
-            }
-            return;
-        }
-        else if ( neighbor_above is Water && neighbor_above is not Acid && (should_dissolve == true || should_water_dissolve == true) )
-        {
-            if (should_dissolve == true)
-            {
-                game_world.RemoveCell(this);
-                return;
-            }
-            if (should_water_dissolve == true)
-            {
-                game_world.RemoveCell(neighbor_above);
-                return;
-            }
-        }
+        // if (neighbor_above != null && neighbor_above is not Water && neighbor_above is not Tornado)
+        // {
+        //     if (should_delete == true)
+        //     {
+        //         game_world.RemoveCell(neighbor_above);
+        //         if (should_remove == true)
+        //         {
+        //             game_world.RemoveCell(this);
+        //         }
+        //     }
+        //     return;
+        // }
+        // else if ( neighbor_above is Water && neighbor_above is not Acid && (should_dissolve == true || should_water_dissolve == true) )
+        // {
+        //     if (should_dissolve == true)
+        //     {
+        //         game_world.RemoveCell(this);
+        //         return;
+        //     }
+        //     if (should_water_dissolve == true)
+        //     {
+        //         game_world.RemoveCell(neighbor_above);
+        //         return;
+        //     }
+        // }
 
         // Below
-        if (neighbor_below != null && neighbor_below is not Water)
+        if (neighbor_below != null && neighbor_below is not Water && neighbor_below is not Tornado)
         {
             if (should_delete == true)
             {
@@ -103,7 +99,7 @@ public class Acid : Water
         }
 
         // Left
-        if (neighbor_left != null && neighbor_left is not Water)
+        if (neighbor_left != null && neighbor_left is not Water && neighbor_left is not Tornado)
         {
             if (should_delete == true)
             {
@@ -130,7 +126,7 @@ public class Acid : Water
         }
 
         // Right
-        if (neighbor_right != null && neighbor_right is not Water)
+        if (neighbor_right != null && neighbor_right is not Water && neighbor_right is not Tornado)
         {
             if (should_delete == true)
             {

@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 namespace PixelBox;
 
-public class Lava : Cell // 50K cell limit
+public class Lava : Cell
 {
     private World game_world;
     public Lava(Vector2 position, World world) : base(position)

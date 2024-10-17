@@ -136,7 +136,7 @@ public class World
             WorldCells.Remove(cell.Position);
         }
     }
-    
+
     /// <summary>
     /// Swaps a cell and its position with a neighboring cell. 
     /// </summary>

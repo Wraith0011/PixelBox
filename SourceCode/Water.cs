@@ -2,9 +2,14 @@ using System;
 using Microsoft.Xna.Framework;
 namespace PixelBox;
 
-public class Water : Cell // 36K limit
+public class Water : Cell
 {   
     private World game_world;
+
+    //protected Cell neighbor_above;
+    protected Cell neighbor_below;
+    protected Cell neighbor_left;
+    protected Cell neighbor_right;
 
     public Water(Vector2 position, World world) : base(position)
     {
@@ -29,9 +34,9 @@ public class Water : Cell // 36K limit
         bool should_displace_offset = GameCore.Random.Next (0, 2) == 0;
         bool should_convert = GameCore.Random.Next(0, CellStats.WATER_CONVERSION_CHANCE) == 0;
 
-        Cell neighbor_below = game_world.GetCell( new Vector2(Position.X, Position.Y + 1) );
-        Cell neighbor_left  = game_world.GetCell( new Vector2(Position.X - 1, Position.Y) );
-        Cell neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
+        neighbor_below = game_world.GetCell( new Vector2(Position.X, Position.Y + 1) );
+        neighbor_left  = game_world.GetCell( new Vector2(Position.X - 1, Position.Y) );
+        neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
         Vector2 potential_position;
 
         // Water to steam conversion
@@ -42,7 +47,7 @@ public class Water : Cell // 36K limit
         }
 
         // Below Movement
-        if ( neighbor_below is Water && should_flow && neighbor_left is not Steam && neighbor_right is not Steam )
+        if ( should_flow && neighbor_below is Water && neighbor_left is not Steam && neighbor_right is not Steam )
         {
             game_world.SwapCell(this, neighbor_below);
             return;
@@ -54,7 +59,7 @@ public class Water : Cell // 36K limit
         }
     
         // Stone Erosion
-        if ( neighbor_below is Stone && should_erode == true)
+        if ( should_erode == true && neighbor_below is Stone )
         {
             Vector2 position = neighbor_below.Position;
             game_world.RemoveCell(neighbor_below);
@@ -88,7 +93,7 @@ public class Water : Cell // 36K limit
             }
 
             // Sand Displacement
-            if (neighbor is Sand && should_displace == true && should_displace_offset == true && i == 1)
+            if (should_displace == true && should_displace_offset == true && i == 1 && neighbor is Sand )
             {
                 game_world.SwapCell(this, neighbor);
                 return;
@@ -121,7 +126,7 @@ public class Water : Cell // 36K limit
             }
 
             // Sand Displacement
-            if (neighbor is Sand && should_displace == true && should_displace_offset == false && i == 1)
+            if (should_displace == true && should_displace_offset == false && i == 1 && neighbor is Sand )
             {
                 game_world.SwapCell(this, neighbor);
                 return;
