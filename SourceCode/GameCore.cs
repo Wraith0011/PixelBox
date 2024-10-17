@@ -166,7 +166,7 @@ public class GameCore : Game
                 case Keys.D0:
                     SelectedCellType = SelectableCellTypes.PoisonFog;
                     return;
-                case Keys.Subtract:
+                case Keys.OemMinus:
                     SelectedCellType = SelectableCellTypes.Tornado;
                     return;
             }
