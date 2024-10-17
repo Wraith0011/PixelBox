@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.ComponentModel.Design;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -129,55 +130,43 @@ public class GameCore : Game
 
     private void SelectCellType()
     {
-        if ( Globals.CurrentKeyboardState.IsKeyDown(Keys.D1) )
+        KeyboardState keyboard_state = Globals.CurrentKeyboardState;
+        Keys[] pressed_keys = keyboard_state.GetPressedKeys();
+        foreach (Keys key in pressed_keys)
         {
-            SelectedCellType = SelectableCellTypes.Water;
-            return;
-        }
-        if ( Globals.CurrentKeyboardState.IsKeyDown(Keys.D2) )
-        {
-            SelectedCellType = SelectableCellTypes.Sand;
-            return;
-        }
-        if ( Globals.CurrentKeyboardState.IsKeyDown(Keys.D3) )
-        {
-            SelectedCellType = SelectableCellTypes.Stone;
-            return;
-        }
-        if ( Globals.CurrentKeyboardState.IsKeyDown(Keys.D4) )
-        {
-            SelectedCellType = SelectableCellTypes.Steam;
-            return;
-        }
-        if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D5))
-        {
-            SelectedCellType = SelectableCellTypes.Lava;
-            return;
-        }
-        if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D6))
-        {
-            SelectedCellType = SelectableCellTypes.Smoke;
-            return;
-        }
-        if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D7))
-        {
-            SelectedCellType = SelectableCellTypes.Fire;
-            return;
-        }
-        if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D8))
-        {
-            SelectedCellType = SelectableCellTypes.Wood;
-            return;
-        }
-        if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D9))
-        {
-            SelectedCellType = SelectableCellTypes.Acid;
-            return;
-        }
-        if (Globals.CurrentKeyboardState.IsKeyDown(Keys.D0))
-        {
-            SelectedCellType = SelectableCellTypes.Tornado;
-            return;
+            switch (key)
+            {
+                case Keys.D1:
+                        SelectedCellType = SelectableCellTypes.Water;
+                        return;
+                case Keys.D2:
+                        SelectedCellType = SelectableCellTypes.Water;
+                        return;
+                case Keys.D3:
+                        SelectedCellType = SelectableCellTypes.Water;
+                        return;
+                case Keys.D4:
+                        SelectedCellType = SelectableCellTypes.Water;
+                        return;
+                case Keys.D5:
+                        SelectedCellType = SelectableCellTypes.Water;
+                        return;
+                case Keys.D6:
+                        SelectedCellType = SelectableCellTypes.Water;
+                        return;
+                case Keys.D7:
+                        SelectedCellType = SelectableCellTypes.Water;
+                        return;
+                case Keys.D8:
+                        SelectedCellType = SelectableCellTypes.Water;
+                        return;
+                case Keys.D9:
+                        SelectedCellType = SelectableCellTypes.Water;
+                        return;
+                case Keys.D0:
+                        SelectedCellType = SelectableCellTypes.Water;
+                        return;
+            }
         }
     }
 
