@@ -24,7 +24,7 @@ public static class CellStats
 
     public static int WATER_FLOW_FACTOR = 150; // How often water flows into other water. Lower values = more flow.
     public static int WATER_DISPERSAL_RATE = 5; // How many additional neighboring cells to check for horizontal movement.
-    public static int WATER_CONVERSION_CHANCE = 50000; // The chance that water will turn into steam. Higher values = less chance.
+    public static int WATER_CONVERSION_CHANCE = 10000; //(50000) // The chance that water will turn into steam. Higher values = less chance.
     
     public static int STONE_EROSION_CHANCE = 300; // How often water will erode stone. Higher values = less chance.
     public static int SAND_DISPLACEMENT_CHANCE = 8; //25 // How often sand will be displaced by water. Higher values = less chance.
@@ -34,7 +34,7 @@ public static class CellStats
     public static int STEAM_DISPERSAL_RATE = 3; // How many additional neighboring cells to check for horizontal movement.
     public static int STEAM_DISPERSAL_CHANCE = 5; // The chance that steam will seek to flow horizontally to empty spaces. Higher values = less chance.
     public static int STEAM_FLOW_FACTOR = 25; // How often steam flows into other steam. Lower values = more flow. (25)
-    public static int STEAM_CONVERSION_CHANCE = 25000; // The chance that steam will turn into water. Higher values = less chance.
+    public static int STEAM_CONVERSION_CHANCE = 5000; //(25000) // The chance that steam will turn into water. Higher values = less chance.
     
     public static int LAVA_FLOW_FACTOR = 800; // How often lava flows into other lava. Lower values = more flow.
     public static int LAVA_DISPERSAL_CHANCE = 10; // Chance for lava to move horizontally. Higher values = less chance.

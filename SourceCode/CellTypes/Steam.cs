@@ -29,7 +29,7 @@ public class Steam : Cell // 43K limit WIP
         bool should_disperse = GameCore.Random.Next(0, CellStats.STEAM_DISPERSAL_CHANCE) == 0;
 
         // Steam to water conversion
-        if (should_convert == true && this is not Smoke && this is not Fire)
+        if (should_convert == true && this is not Smoke && this is not Fire && WeatherCycle.IsRaining == true)
         {
             Vector2 position = Position;
             game_world.AddCell( new Water(position, game_world) );

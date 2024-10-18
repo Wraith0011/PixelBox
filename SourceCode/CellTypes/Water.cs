@@ -6,7 +6,6 @@ public class Water : Cell
 {   
     private World game_world;
 
-    //protected Cell neighbor_above;
     protected Cell neighbor_below;
     protected Cell neighbor_left;
     protected Cell neighbor_right;
@@ -40,7 +39,7 @@ public class Water : Cell
         Vector2 potential_position;
 
         // Water to steam conversion
-        if (should_convert == true && this is not Acid)
+        if (should_convert == true && this is not Acid && WeatherCycle.IsRaining == false)
         {
             Vector2 position = Position;
             game_world.AddCell( new Steam(position, game_world) );

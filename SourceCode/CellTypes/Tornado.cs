@@ -7,6 +7,7 @@ namespace PixelBox;
 public class Tornado : Cell
 {
     private World game_world;
+    
     private int lifetime = CellStats.TORNADO_LIFETIME;
 
     public Tornado(Vector2 position, World world) : base(position)

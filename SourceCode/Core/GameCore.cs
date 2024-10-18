@@ -13,15 +13,12 @@ public class GameCore : Game
     public static Random Random {get; private set;}
     public World GameWorld {get; private set;}
     public Vector2 WorldSize {get; private set;} = new Vector2(300, 200);
+    public int CellCount;
 
     // Monitor lag
-    public bool LAG_MONITOR = true; // Enable or disable the lag monitor
-    public bool CONTROLLING_LAG = false;
-    public bool WAS_ACTIVE = false; // Track previous window state 
-    public Timer LagTimer;
-    public int LAG_FPS_LIMIT = 30; // FPS limit before lag algorithm kicks in
-    public int LAG_DELETION_RATE; // How many cells will be deleted when lag is detected. Dynamically sized based on the cell count of the game world.
-    
+    LagMonitor LagMonitor;
+
+    // Select Cells    
     public enum SelectableCellTypes { Water, Sand, Stone, Steam, Lava, Smoke, Fire, Wood, Acid, PoisonFog, Tornado };
     public SelectableCellTypes SelectedCellType {get; private set;} = SelectableCellTypes.Water; // Default selected cell is water
    
@@ -60,7 +57,6 @@ public class GameCore : Game
 
         // Init WraithLib
         Globals.Initialize(graphics, this.Content);
-        LagTimer = new Timer();
 
         // Init general
         Font = Content.Load<SpriteFont>("Font");
@@ -80,14 +76,15 @@ public class GameCore : Game
         };
         TimeCycle = new DayNightCycle(TimeCycleLength, GameWorld.WorldCanvas, TimeCycleColors[0], TimeCycleColors[1], TimeCycleColors[2], TimeCycleColors[3], DayNightCycle.TimeOfDay.Morning );
 
-        // Init UI
-        UI = new AwfulUI(this);
+        // Init UI & lag monitor
+        LagMonitor = new LagMonitor(this, GameWorld);
+        UI = new AwfulUI(this, LagMonitor);
     }
 
     protected override void Update(GameTime game_time)
     {
         base.Update(game_time);
-        LagTimer.Update();
+        LagMonitor.LagTimer.Update();
 
         // Update WraithLib
         Globals.Update(game_time, GameWorld.WorldCanvas);
@@ -95,12 +92,14 @@ public class GameCore : Game
         // Update game world
         GameWorld.Update();
         TimeCycle.Update();
+        CellCount = GameWorld.WorldCells.Count;
 
         // Allow user input
-        if (LAG_MONITOR == true && Globals.FPS > LAG_FPS_LIMIT) { ManageMouse(); }
+        if (LagMonitor.ENABLED == true && Globals.FPS > LagMonitor.LAG_FPS_LIMIT)
+        { ManageMouse(); }
         SelectCellType();
 
-        MonitorLag();
+        LagMonitor.MonitorLag();
     }
 
     protected override void Draw(GameTime game_time)
@@ -111,7 +110,7 @@ public class GameCore : Game
         GameWorld.WorldCanvas.Activate();
         Globals.Sprite_Batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null);
         
-        GameWorld.Draw();
+        GameWorld.Draw();   
 
         // End drawing on the canvas
         Globals.Sprite_Batch.End();
@@ -122,6 +121,7 @@ public class GameCore : Game
 
         // Draw the UI in screen space
         UI.Draw();
+        WeatherCycle.Update(GameWorld);
         
         // End drawing to the screen
         Globals.Sprite_Batch.End();
@@ -271,71 +271,5 @@ public class GameCore : Game
         }
     }
 
-    private void MonitorLag()
-    {
-        bool steam_cleared = false;
-        LAG_DELETION_RATE = GameWorld.WorldCells.Count / 200;
-
-        // Monitor the amount of lag
-
-        // If screen is not active, Pause the timer and return
-        if (IsActive == false || Globals.ResizingWindow == true)
-        { 
-            WAS_ACTIVE = false; 
-            LagTimer.Pause();
-            Console.WriteLine("Screen is not active. Timer Paused."); 
-            return; 
-        }
-        // If the screen is just activated, wait to control the lag for a decent amount of time.
-        if (WAS_ACTIVE == false && IsActive == true && Globals.ResizingWindow == false)
-        {
-            WAS_ACTIVE = true;
-            LagTimer.Start(0.5f);
-            Console.WriteLine("Screen activated. Starting Timer.");
-        }
-
-        // Control lag when needed, and the lag timer is inactive.
-        if (IsActive == true && Globals.FPS <= LAG_FPS_LIMIT && LAG_MONITOR == true && LagTimer.Active == false)
-        {        
-            Console.WriteLine("Controlling lag. Timer is: " + LagTimer.Active + " " + LagTimer.ElapsedTime);
-            CONTROLLING_LAG = true;
-
-            // When user is active on screen and lag control is needed, add a delay to prevent deletion of excess cells
-            if (WAS_ACTIVE == true) 
-            { LagTimer.Start(0.01f); }
-
-            // Remove all steam
-            if (steam_cleared == false)
-            {
-                foreach (var kvp in GameWorld.WorldCells)
-                {
-                    Cell cell = kvp.Value;
-                    if (cell is Steam)
-                    {
-                        GameWorld.RemoveCell(cell);
-                        steam_cleared = true;
-                    }
-                }
-            }
-
-            // Remove cells until lag stops
-            int count = 0;
-            if (GameWorld.WorldCells.Count > LAG_DELETION_RATE)
-            {
-                foreach (var kvp in GameWorld.WorldCells) 
-                {
-                    Cell cell = kvp.Value;
-                    if (count < LAG_DELETION_RATE)
-                    {
-                        GameWorld.RemoveCell(cell);
-                        count++;
-                    }
-                }
-            }
-        }
-        // When the timer is done, reset controlling lag variable. If no more lag control is needed, CONTROLLING_LAG will remain false.
-        else if(LagTimer.Active == false) 
-        {CONTROLLING_LAG = false;}
-    }
 
 }
