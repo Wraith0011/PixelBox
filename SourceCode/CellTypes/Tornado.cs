@@ -34,11 +34,9 @@ public class Tornado : Cell
         bool should_convert = GameCore.Random.Next(0, CellStats.TORNADO_DESTRUCTION_FACTOR) == 0;
 
         Vector2 ground_position;
-        // Cell neighbor_left = game_world.GetCell( new Vector2(Position.X - 1, Position.Y) );
-        // Cell neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
         
-        Cell immediate_neighbor_left = game_world.GetCell( new Vector2(Position.X - 1, Position.Y) );
-        Cell immediate_neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
+        // Cell immediate_neighbor_left = game_world.GetCell( new Vector2(Position.X - 1, Position.Y) );
+        // Cell immediate_neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
         Cell neighbor_left;
         Cell neighbor_right;
         

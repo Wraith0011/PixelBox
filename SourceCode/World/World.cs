@@ -14,6 +14,7 @@ public class World
     public List<Lava> LavaCells {get; private set;}
     public List<Wood> WoodCells {get; private set;}
     public List<Tornado> TornadoCells {get; private set;}
+    public List<Lightning> LightningCells {get; private set;}
 
     public Canvas WorldCanvas {get; set;}
     public Vector2 WorldCanvasSize {get; private set;} // World boundary for cells is based on this. This is the native size of the game, not the scaled canvas size.
@@ -38,6 +39,7 @@ public class World
         LavaCells = new List<Lava>();
         WoodCells = new List<Wood>();
         TornadoCells = new List<Tornado>();
+        LightningCells = new List<Lightning>();
         
         // Get cells in the world, and add them to the list of that cell type
         foreach (Cell cell in WorldCells.Values)
@@ -64,6 +66,9 @@ public class World
                     break;
                 case Tornado tornado_cell:
                     TornadoCells.Add(tornado_cell);
+                    break;
+                case Lightning lightning_cell:
+                    LightningCells.Add(lightning_cell);
                     break;
             }
         }
@@ -96,6 +101,10 @@ public class World
         foreach (Tornado tornado_cell in TornadoCells)
         {
             tornado_cell.Update();
+        }
+        foreach (Lightning lightning_cell in LightningCells)
+        {
+            lightning_cell.Update();
         }
     }
 

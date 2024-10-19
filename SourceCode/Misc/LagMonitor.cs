@@ -1,17 +1,15 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using WraithLib;
 namespace PixelBox;
 
 public class LagMonitor
 {
-    public bool ENABLED = true; // Enable or disable the lag monitor
+    public bool ENABLED; // Enable or disable the lag monitor
     public bool CONTROLLING_LAG = false;
     public bool WAS_ACTIVE = false; // Track previous window state 
     public Timer LagTimer;
     public int LAG_FPS_LIMIT = 30; // FPS limit before lag algorithm kicks in
     public int LAG_DELETION_RATE; // How many cells will be deleted when lag is detected. Dynamically sized based on the cell count of the game world.
+    public int LAG_DELETION_FACTOR = 150; // 200 // Divides the world cell count by this amount in order to determine how many cells will be deleted. Lower values = more cells deleted at once.
 
     private GameCore Game;
     private World GameWorld;
@@ -27,9 +25,12 @@ public class LagMonitor
     {
         bool steam_cleared = false;
         bool water_cleared = false;
-        LAG_DELETION_RATE = GameWorld.WorldCells.Count / 200;
+        LAG_DELETION_RATE = GameWorld.WorldCells.Count / LAG_DELETION_FACTOR;
 
         // Monitor the amount of lag
+        
+        // Enable the lag monitor when the window is not resizing
+        if (Globals.ResizingWindow == false && ENABLED == false) { ENABLED = true; }
 
         // If screen is not active, Pause the timer and return
         if (Game.IsActive == false || Globals.ResizingWindow == true)
@@ -42,7 +43,7 @@ public class LagMonitor
         if (WAS_ACTIVE == false && Game.IsActive == true && Globals.ResizingWindow == false)
         {
             WAS_ACTIVE = true;
-            LagTimer.Start(30); // Timer is distorted because of lag. Timer counts faster
+            LagTimer.Start(40); // Timer is distorted because of lag. Timer counts faster
         }
 
         // Control lag when needed, and the lag timer is inactive.
@@ -51,15 +52,16 @@ public class LagMonitor
             // When user is active on screen and lag control is needed, add a delay to prevent deletion of excess cells
             CONTROLLING_LAG = true;
             if (WAS_ACTIVE == true) 
-            { LagTimer.Start(0.4f); }
+            { LagTimer.Start(0.2f); } // 0.3
 
+            // Remove steam until lag stops
             int steam_count = 0;
             if (GameWorld.WorldCells.Count > LAG_DELETION_RATE)
             {
                 foreach (var kvp in GameWorld.WorldCells)
                 {
                     Cell cell = kvp.Value;
-                    if (steam_count < LAG_DELETION_RATE && cell is Steam)
+                    if (steam_count < LAG_DELETION_RATE && cell is Steam && cell is not Tornado)
                     {
                         GameWorld.RemoveCell(cell);
                         steam_count++;

@@ -20,6 +20,7 @@ public static class CellStats
     public static Dictionary<int, Color> WoodColors {get; private set;}
     public static Dictionary<int, Color> AcidColors {get; private set;}
     public static Dictionary<int, Color> TornadoColors {get; private set;}
+    public static Dictionary<int, Color> LightningColors {get; private set;}
 
 
     public static int WATER_FLOW_FACTOR = 150; // How often water flows into other water. Lower values = more flow.
@@ -35,7 +36,8 @@ public static class CellStats
     public static int STEAM_DISPERSAL_CHANCE = 5; // The chance that steam will seek to flow horizontally to empty spaces. Higher values = less chance.
     public static int STEAM_FLOW_FACTOR = 25; // How often steam flows into other steam. Lower values = more flow. (25)
     public static int STEAM_CONVERSION_CHANCE = 5000; //(25000) // The chance that steam will turn into water. Higher values = less chance.
-    
+    public static int STEAM_SPAWN_LIGHTNING_CHANCE = 10000; // The chance that steam will turn into lightning. Higher values = less chance.
+
     public static int LAVA_FLOW_FACTOR = 800; // How often lava flows into other lava. Lower values = more flow.
     public static int LAVA_DISPERSAL_CHANCE = 10; // Chance for lava to move horizontally. Higher values = less chance.
     public static int LAVA_MELTING_CHANCE = 10; // Chance for lava to melt water and sand. Higher values = less chance.
@@ -69,7 +71,12 @@ public static class CellStats
     public static int TORNADO_LIFETIME = 60* 30; // The lifetime of a tornado in frames that it will be active. 60 frames = 1 second... hopefully
     public static int TORNADO_DELETION_FACTOR = 80; // The chance for a tornado to be deleted upon the end of its lifetime. Higher values = less chance.
 
-
+    public static int LIGHTNING_RANGE = 12; // 10 // How many neighboring cells lightning will search
+    public static int LIGHTNING_BRANCH_CHANCE = 350; // 300
+    public static int LIGHTNING_LIFETIME = 14; // 8
+    public static int LIGHTNING_GROUNDSEARCH_FACTOR = 200;// 200 // Chance lightning will search for the ground. Higher values = less chance.
+    public static int LIGHTNING_SPAWNCHANCE = 20; // 20 // The chance of lightning cells to spawn other lightning cells. Higher values = less chance
+    public static int LIGHTNING_DESTRUCTION_FACTOR = 5; // 5 // The chance that lightning cells should destroy other cells. Higher values = less chance.
 
     public static void InitCellStats()
     {
@@ -144,6 +151,13 @@ public static class CellStats
             { 1, new Color(180, 185, 190) },
             { 2, new Color(180, 185, 185) },
             { 3, new Color(180, 180, 190) }
+        };
+        LightningColors = new Dictionary<int, Color>()
+        {
+            { 0, new Color(230, 230, 255) },
+            { 1, new Color(225, 225, 250) },
+            { 2, new Color(230, 225, 250) },
+            { 3, new Color(225, 230, 255) }
         };
     }
 

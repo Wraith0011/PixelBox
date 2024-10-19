@@ -3,10 +3,11 @@ using Microsoft.Xna.Framework;
 using WraithLib;
 namespace PixelBox;
 
-public class Steam : Cell // 43K limit WIP
+public class Steam : Cell
 {
     World game_world;
     public bool ShouldConvert {get; set;} = false;
+    public bool ShouldSpawnLightning {get; set;} = false;
 
     public Steam(Vector2 position, World world) : base(position)
     {
@@ -27,12 +28,18 @@ public class Steam : Cell // 43K limit WIP
         bool should_flow = GameCore.Random.Next(0, CellStats.STEAM_FLOW_FACTOR) == 0;
         bool should_convert = GameCore.Random.Next(0, CellStats.STEAM_CONVERSION_CHANCE) == 0;
         bool should_disperse = GameCore.Random.Next(0, CellStats.STEAM_DISPERSAL_CHANCE) == 0;
+        bool should_spawn_lightning = GameCore.Random.Next(0, CellStats.STEAM_SPAWN_LIGHTNING_CHANCE) == 0;
 
         // Steam to water conversion
         if (should_convert == true && this is not Smoke && this is not Fire && WeatherCycle.IsRaining == true)
         {
             Vector2 position = Position;
             game_world.AddCell( new Water(position, game_world) );
+        }
+        if (should_spawn_lightning && this is not Smoke && this is not Fire && WeatherCycle.IsRaining == true)
+        {
+            Vector2 position = Position;
+            game_world.AddCell(new Lightning(position, game_world) );
         }
 
         // Up movement

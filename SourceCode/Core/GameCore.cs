@@ -19,7 +19,7 @@ public class GameCore : Game
     LagMonitor LagMonitor;
 
     // Select Cells    
-    public enum SelectableCellTypes { Water, Sand, Stone, Steam, Lava, Smoke, Fire, Wood, Acid, PoisonFog, Tornado };
+    public enum SelectableCellTypes { Water, Sand, Stone, Steam, Lava, Smoke, Fire, Wood, Acid, PoisonFog, Tornado, Lightning };
     public SelectableCellTypes SelectedCellType {get; private set;} = SelectableCellTypes.Water; // Default selected cell is water
    
     // Time cycle
@@ -65,6 +65,7 @@ public class GameCore : Game
         // Init world
         CellStats.InitCellStats();
         GameWorld = new World( new Vector2(WorldSize.X, WorldSize.Y), new Color(100, 100, 180));
+        SoundManager.LoadContent(this);
 
         // Init day and night cycle
         TimeCycleColors = new Dictionary<int, Color>()
@@ -79,6 +80,9 @@ public class GameCore : Game
         // Init UI & lag monitor
         LagMonitor = new LagMonitor(this, GameWorld);
         UI = new AwfulUI(this, LagMonitor);
+
+        // Intro
+        //SoundManager.PlayIntroTheme();
     }
 
     protected override void Update(GameTime game_time)
@@ -93,12 +97,14 @@ public class GameCore : Game
         GameWorld.Update();
         TimeCycle.Update();
         CellCount = GameWorld.WorldCells.Count;
+        SoundManager.PlaySoundEffects(this);
 
         // Allow user input
-        if (LagMonitor.ENABLED == true && Globals.FPS > LagMonitor.LAG_FPS_LIMIT)
+        if (LagMonitor.ENABLED == true && LagMonitor.CONTROLLING_LAG == false)
         { ManageMouse(); }
         SelectCellType();
 
+        // Monitor lag
         LagMonitor.MonitorLag();
     }
 
@@ -159,13 +165,13 @@ public class GameCore : Game
                     SelectedCellType = SelectableCellTypes.Water;
                     return;
                 case Keys.D2:
-                    SelectedCellType = SelectableCellTypes.Sand;
+                    SelectedCellType = SelectableCellTypes.Steam;
                     return;
                 case Keys.D3:
-                    SelectedCellType = SelectableCellTypes.Stone;
+                    SelectedCellType = SelectableCellTypes.Sand;
                     return;
                 case Keys.D4:
-                    SelectedCellType = SelectableCellTypes.Steam;
+                    SelectedCellType = SelectableCellTypes.Stone;
                     return;
                 case Keys.D5:
                     SelectedCellType = SelectableCellTypes.Lava;
@@ -188,18 +194,22 @@ public class GameCore : Game
                 case Keys.OemMinus:
                     SelectedCellType = SelectableCellTypes.Tornado;
                     return;
+                case Keys.OemPlus:
+                    SelectedCellType = SelectableCellTypes.Lightning;
+                    return;
             }
         }
     }
 
     public void OnClientSizeChanged(object sender, EventArgs e)
     {
+        // Inform globls about the window changing size so the canvas can be resized as well
         Globals.ClientSizeChanged(Window.ClientBounds.Width, Window.ClientBounds.Height, GameWorld.WorldCanvas);
+        // Disable lag monitor when resizing the window
+        LagMonitor.ENABLED = false;
+        LagMonitor.LagTimer.Start(30);
     }
 
-    /// <summary>
-    /// Places cells in a grid centered on the given position on the canvas.
-    /// </summary>
     private void PlaceCellsInGrid(Vector2 position, int grid_size)
     {
         // rows
@@ -246,6 +256,9 @@ public class GameCore : Game
                             break;
                         case SelectableCellTypes.Tornado:
                             GameWorld.TryAddCell( new Tornado(grid_coords, GameWorld) );
+                            break;
+                        case SelectableCellTypes.Lightning:
+                            GameWorld.TryAddCell( new Lightning(grid_coords, GameWorld) );
                             break;
                     }
                 }
