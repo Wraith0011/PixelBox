@@ -40,7 +40,7 @@ public class Lightning: Cell
         if (lifetime <= 0) { game_world.RemoveCell(this); }
 
         // Search for the ground
-        if (ground_search == true)
+        if (ground_search == true /*&& left_bias == false && right_bias == false && ground_found == false*/)
         {
             for (int y_position = (int)Position.Y + 1; y_position < game_world.WorldCanvasSize.Y; y_position++)
             {
@@ -50,14 +50,12 @@ public class Lightning: Cell
                 {
                     break;
                 }
-                
-                game_world.AddCell(new Lightning(new Vector2(Position.X, y_position), game_world));
-
-                // If the cell is non-destructible, stop the lightning propagation
-                if (cell is not Lightning /*&& cell is not Steam &&*/ && should_destroy_cells == false)
+                if (cell is not Lightning && should_destroy_cells == false)
                 {
-                    break; // Exit the loop if hitting a solid cell
+                    break;
                 }
+                // Add cells along the way
+                game_world.AddCell(new Lightning(new Vector2(Position.X, y_position), game_world));
 
                 // Check and see if cell should be destroyed 
                 if (cell != null && cell is not Lightning && should_destroy_cells == true)
@@ -66,11 +64,10 @@ public class Lightning: Cell
                     {
                         game_world.AddCell( new Steam(new Vector2(Position.X, y_position), game_world) );
                     }
-                    else /*if (/*cell is not Steam2)*/
+                    else
                     {
                         game_world.AddCell( new Lightning(new Vector2(Position.X, y_position), game_world) );
                     }
-
 
                     // Lightning strike sound effect
                     bool should_play_sound = GameCore.Random.Next(0, 10) == 0;
@@ -99,7 +96,6 @@ public class Lightning: Cell
                     }
                     else if (cell != null && cell is not Lightning && cell is not Steam && should_destroy_cells == true)
                     {
-                        //Console.WriteLine("Destroyed cell on the right while branching downwards");
                         Lightning lightning = new Lightning( new Vector2(Position.X + branch_offset, y_position), game_world );
                         game_world.AddCell(lightning);
                         lightning.ground_search = false;
