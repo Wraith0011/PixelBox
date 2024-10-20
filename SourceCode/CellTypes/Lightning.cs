@@ -40,7 +40,7 @@ public class Lightning: Cell
         if (lifetime <= 0) { game_world.RemoveCell(this); }
 
         // Search for the ground
-        if (ground_search == true /*&& left_bias == false && right_bias == false && ground_found == false*/)
+        if (ground_search == true)
         {
             for (int y_position = (int)Position.Y + 1; y_position < game_world.WorldCanvasSize.Y; y_position++)
             {
