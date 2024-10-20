@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using PixelBox;
@@ -13,8 +12,9 @@ public class Lightning: Cell
     private bool ground_search;
     private bool should_spawn;
     private int branch_offset;
-    private bool branch_left_bias;
+    private bool offset_left_bias;
     private bool should_destroy_cells;
+
 
     public Lightning(Vector2 position, World world) : base(position)
     {
@@ -29,46 +29,67 @@ public class Lightning: Cell
         CellColor = ChooseRandomColor();
         left_bias = GameCore.Random.Next(0, CellStats.LIGHTNING_BRANCH_CHANCE) == 0;
         right_bias = GameCore.Random.Next(0, CellStats.LIGHTNING_BRANCH_CHANCE) == 0;
+        
         ground_search = GameCore.Random.Next(0, CellStats.LIGHTNING_GROUNDSEARCH_FACTOR) == 0;
         should_spawn = GameCore.Random.Next(0, CellStats.LIGHTNING_SPAWNCHANCE) == 0;
-        branch_offset = GameCore.Random.Next(0, 3);
-        branch_left_bias = GameCore.Random.Next(0, 2) == 0;
         should_destroy_cells = GameCore.Random.Next(0, CellStats.LIGHTNING_DESTRUCTION_FACTOR) == 0;
+
+        branch_offset = GameCore.Random.Next(0, 3);
+        offset_left_bias = GameCore.Random.Next(0, 2) == 0;
 
         if (lifetime <= 0) { game_world.RemoveCell(this); }
 
         // Search for the ground
-        if (ground_search == true && left_bias == false && right_bias == false)
+        if (ground_search == true /*&& left_bias == false && right_bias == false && ground_found == false*/)
         {
-            for (int y_position = (int)Position.Y; y_position < game_world.WorldCanvasSize.Y; y_position++)
+            for (int y_position = (int)Position.Y + 1; y_position < game_world.WorldCanvasSize.Y; y_position++)
             {
                 // Get each cell along the way
                 Cell cell = game_world.GetCell( new Vector2(Position.X, y_position) );
-
-                // Spawn a cell under this lightning cell if there is empty space
-                if (should_spawn == true && branch_left_bias == true && cell == null)
+                if (cell is Steam)
                 {
-                    Lightning lightning = new Lightning( new Vector2(Position.X - branch_offset, y_position), game_world );
-                    lightning.ground_search = false;
-                    return;
+                    break;
+                }
+                
+                game_world.AddCell(new Lightning(new Vector2(Position.X, y_position), game_world));
+
+                // If the cell is non-destructible, stop the lightning propagation
+                if (cell is not Lightning /*&& cell is not Steam &&*/ && should_destroy_cells == false)
+                {
+                    break; // Exit the loop if hitting a solid cell
                 }
 
-                // If something exists under the lightning, check and see if it should be destroyed
-                else if (cell != null && cell is not Lightning && should_destroy_cells == true)
+                // Check and see if cell should be destroyed 
+                if (cell != null && cell is not Lightning && should_destroy_cells == true)
                 {
-                    game_world.RemoveCell(cell);
-                    Lightning lightning = new Lightning( new Vector2(Position.X, y_position), game_world );
+                    if (cell is Water || cell is Steam)
+                    {
+                        game_world.AddCell( new Steam(new Vector2(Position.X, y_position), game_world) );
+                    }
+                    else /*if (/*cell is not Steam2)*/
+                    {
+                        game_world.AddCell( new Lightning(new Vector2(Position.X, y_position), game_world) );
+                    }
+
+
+                    // Lightning strike sound effect
                     bool should_play_sound = GameCore.Random.Next(0, 10) == 0;
                     if (should_play_sound == true)
                     {
                         SoundEffectInstance LightningSoundInstance = SoundManager.LightningSound.CreateInstance();
-                        LightningSoundInstance.Play();
+                        LightningSoundInstance.Volume = 0.6f;
+                        SoundManager.ActiveLightningSounds.Add(LightningSoundInstance);
+                        if (SoundManager.ActiveLightningSounds.Count < SoundManager.MAX_LIGHTNING_SOUNDS)
+                        {
+                            LightningSoundInstance.Play();
+                        }
                     }
-                    return;
+                    break;
                 }
 
-                // Handle branching while traveling downwards
-                else if (should_spawn == true && branch_left_bias == false)
+                // Handle Offsetting while traveling downwards
+                // Right 
+                if (should_spawn == true && offset_left_bias == false)
                 {
                     if (cell == null)
                     {
@@ -76,15 +97,16 @@ public class Lightning: Cell
                         game_world.AddCell(lightning);
                         lightning.ground_search = false;
                     }
-                    else if (cell != null && cell is not Lightning && should_destroy_cells == true)
+                    else if (cell != null && cell is not Lightning && cell is not Steam && should_destroy_cells == true)
                     {
+                        //Console.WriteLine("Destroyed cell on the right while branching downwards");
                         Lightning lightning = new Lightning( new Vector2(Position.X + branch_offset, y_position), game_world );
                         game_world.AddCell(lightning);
                         lightning.ground_search = false;
                     }
-
                 }
-                else if (should_spawn == true && branch_left_bias == true)
+                // Left
+                else if (should_spawn == true && offset_left_bias == true)
                 {
                     if (cell == null)
                     {
@@ -92,11 +114,10 @@ public class Lightning: Cell
                         game_world.AddCell(lightning);
                         lightning.ground_search = false;
                     }
-                    else if (cell != null && cell is not Lightning && should_destroy_cells == true)
+                    else if (cell != null && cell is not Lightning && cell is not Steam && should_destroy_cells == true)
                     {
-                    Lightning lightning = new Lightning( new Vector2(Position.X + branch_offset, y_position), game_world );
+                        Lightning lightning = new Lightning( new Vector2(Position.X + branch_offset, y_position), game_world );
                         game_world.AddCell(lightning);
-                        lightning.ground_search = false;
                     }
                 }
             }
@@ -129,7 +150,7 @@ public class Lightning: Cell
             {
                 if (should_destroy_cells == true)
                 {
-                    game_world.AddCell(new Lightning( new Vector2(Position.X + x, Position.Y + branch_offset), game_world ) );
+                   game_world.AddCell(new Lightning( new Vector2(Position.X + x, Position.Y + branch_offset), game_world ) );
                 }
                 else if (should_destroy_cells == false)
                 {

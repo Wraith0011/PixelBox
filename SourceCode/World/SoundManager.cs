@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework.Audio;
@@ -21,6 +22,8 @@ public static class SoundManager
     public static bool TornadoSoundShouldPlay;
 
     public static SoundEffect LightningSound;
+    public static List<SoundEffectInstance> ActiveLightningSounds;
+    public static int MAX_LIGHTNING_SOUNDS = 2;
 
     public static void LoadContent(GameCore game_core)
     {
@@ -36,6 +39,7 @@ public static class SoundManager
         TornadoSound_0_Instance = TornadoSound_0.CreateInstance();
 
         LightningSound = game_core.Content.Load<SoundEffect>("Retro Impact 20");
+        ActiveLightningSounds = new List<SoundEffectInstance>();
 
     }
     public static void PlayIntroTheme()
@@ -82,6 +86,12 @@ public static class SoundManager
         {
             LavaSoundTimer.Update();
             TornadoSoundTimer.Update();
+        }
+
+        // Update max sounds
+        if (ActiveLightningSounds.Count > MAX_LIGHTNING_SOUNDS)
+        {
+            ActiveLightningSounds.Clear();
         }
     }
 

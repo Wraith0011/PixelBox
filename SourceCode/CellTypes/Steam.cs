@@ -36,7 +36,10 @@ public class Steam : Cell
             Vector2 position = Position;
             game_world.AddCell( new Water(position, game_world) );
         }
-        if (should_spawn_lightning && this is not Smoke && this is not Fire && WeatherCycle.IsRaining == true)
+
+        // Steam to lightning conversion
+        Cell neighbor_below = game_world.GetCell( new Vector2(Position.X, Position.Y + 1) );
+        if (should_spawn_lightning && this is not Smoke && this is not Fire && WeatherCycle.IsRaining == true && neighbor_below == null)
         {
             Vector2 position = Position;
             game_world.AddCell(new Lightning(position, game_world) );

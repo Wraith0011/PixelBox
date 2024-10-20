@@ -35,8 +35,6 @@ public class Tornado : Cell
 
         Vector2 ground_position;
         
-        // Cell immediate_neighbor_left = game_world.GetCell( new Vector2(Position.X - 1, Position.Y) );
-        // Cell immediate_neighbor_right = game_world.GetCell( new Vector2(Position.X + 1, Position.Y) );
         Cell neighbor_left;
         Cell neighbor_right;
         
