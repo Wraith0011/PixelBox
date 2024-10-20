@@ -36,7 +36,7 @@ public static class CellStats
     public static int STEAM_DISPERSAL_CHANCE = 5; // The chance that steam will seek to flow horizontally to empty spaces. Higher values = less chance.
     public static int STEAM_FLOW_FACTOR = 25; // How often steam flows into other steam. Lower values = more flow. (25)
     public static int STEAM_CONVERSION_CHANCE = 5000; //(25000) // The chance that steam will turn into water. Higher values = less chance.
-    public static int STEAM_SPAWN_LIGHTNING_CHANCE = 1000; // 10000 // The chance that steam will turn into lightning. Higher values = less chance.
+    public static int STEAM_SPAWN_LIGHTNING_CHANCE = 500; // 10000 // The chance that steam will turn into lightning. Higher values = less chance.
 
     public static int LAVA_FLOW_FACTOR = 800; // How often lava flows into other lava. Lower values = more flow.
     public static int LAVA_DISPERSAL_CHANCE = 10; // Chance for lava to move horizontally. Higher values = less chance.

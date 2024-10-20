@@ -13,7 +13,6 @@ public class GameCore : Game
     public static Random Random {get; private set;}
     public World GameWorld {get; private set;}
     public Vector2 WorldSize {get; private set;} = new Vector2(300, 200);
-    public int CellCount;
 
     // Monitor lag
     LagMonitor LagMonitor;
@@ -88,20 +87,17 @@ public class GameCore : Game
     protected override void Update(GameTime game_time)
     {
         base.Update(game_time);
-        LagMonitor.LagTimer.Update();
-
         // Update WraithLib
         Globals.Update(game_time, GameWorld.WorldCanvas);
 
         // Update game world
         GameWorld.Update();
         TimeCycle.Update();
-        CellCount = GameWorld.WorldCells.Count;
+        WeatherCycle.Update(GameWorld);
         SoundManager.PlaySoundEffects(this);
 
         // Allow user input
-        if (LagMonitor.ENABLED == true && LagMonitor.CONTROLLING_LAG == false)
-        { ManageMouse(); }
+        if (LagMonitor.CONTROLLING_LAG == false) { ManageMouse(); }
         SelectCellType();
 
         // Monitor lag
@@ -116,6 +112,7 @@ public class GameCore : Game
         GameWorld.WorldCanvas.Activate();
         Globals.Sprite_Batch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null);
         
+        // Draw game world
         GameWorld.Draw();   
 
         // End drawing on the canvas
@@ -127,12 +124,11 @@ public class GameCore : Game
 
         // Draw the UI in screen space
         UI.Draw();
-        WeatherCycle.Update(GameWorld);
         
         // End drawing to the screen
         Globals.Sprite_Batch.End();
 
-        // Keep the time
+        // Update the time after drawing is done
         Globals.UpdateGlobalTime(game_time);
     }
 
@@ -205,6 +201,7 @@ public class GameCore : Game
     {
         // Inform globls about the window changing size so the canvas can be resized as well
         Globals.ClientSizeChanged(Window.ClientBounds.Width, Window.ClientBounds.Height, GameWorld.WorldCanvas);
+        
         // Disable lag monitor when resizing the window
         LagMonitor.ENABLED = false;
         LagMonitor.LagTimer.Start(30);

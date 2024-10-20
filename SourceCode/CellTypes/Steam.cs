@@ -42,7 +42,7 @@ public class Steam : Cell
         if (should_spawn_lightning && this is not Smoke && this is not Fire && WeatherCycle.IsRaining == true && neighbor_below == null)
         {
             Vector2 position = Position;
-            game_world.AddCell(new Lightning(position, game_world) );
+            game_world.AddCell( new Lightning(new Vector2(Position.X, Position.Y + 1), game_world) );
         }
 
         // Up movement

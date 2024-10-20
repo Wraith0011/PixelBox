@@ -28,7 +28,8 @@ public class LagMonitor
         LAG_DELETION_RATE = GameWorld.WorldCells.Count / LAG_DELETION_FACTOR;
 
         // Monitor the amount of lag
-        
+        LagTimer.Update();
+
         // Enable the lag monitor when the window is not resizing
         if (Globals.ResizingWindow == false && ENABLED == false) { ENABLED = true; }
 

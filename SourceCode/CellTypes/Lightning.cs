@@ -46,7 +46,7 @@ public class Lightning: Cell
             {
                 // Get each cell along the way
                 Cell cell = game_world.GetCell( new Vector2(Position.X, y_position) );
-                if (cell is Steam)
+                if (cell is Steam && cell is not Smoke)
                 {
                     break;
                 }

@@ -46,10 +46,10 @@ public class AwfulUI
         Globals.Sprite_Batch.DrawString(Font, "" + GameWorld.GetCell(Globals.MousePositionOnCanvas), new Vector2(Globals.MousePosition.X + 20, Globals.MousePosition.Y - 8), UI_Color);
         Globals.Sprite_Batch.DrawString(Font, "Brush Size: " + GameCore.ScrollValue/2, UI_Position_3, UI_Color);
         
-        Globals.Sprite_Batch.DrawString(Font, "Water Cells: " + GameWorld.WaterCells.Count, UI_Position_5, UI_Color);
+        Globals.Sprite_Batch.DrawString(Font, "Water&Steam Cells: " + (GameWorld.WaterCells.Count + GameWorld.SteamCells.Count), UI_Position_5, UI_Color);
         Globals.Sprite_Batch.DrawString(Font, "Sand Cells: " + GameWorld.SandCells.Count, UI_Position_6, UI_Color);
         Globals.Sprite_Batch.DrawString(Font, "Stone Cells: " + GameWorld.StoneCells.Count, UI_Position_7, UI_Color);
-        Globals.Sprite_Batch.DrawString(Font, "Steam Cells: " + GameWorld.SteamCells.Count, UI_Position_8, UI_Color);
+        //Globals.Sprite_Batch.DrawString(Font, "Steam Cells: " + GameWorld.SteamCells.Count, UI_Position_8, UI_Color);
         Globals.Sprite_Batch.DrawString(Font, "Lava Cells: " + GameWorld.LavaCells.Count, UI_Position_9, UI_Color);
         Globals.Sprite_Batch.DrawString(Font, "Wood Cells: " + GameWorld.WoodCells.Count, UI_Position_10, UI_Color);
         Globals.Sprite_Batch.DrawString(Font, "Tornado Cells: " + GameWorld.TornadoCells.Count, UI_Position_11, UI_Color);
